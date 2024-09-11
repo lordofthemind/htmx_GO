@@ -4,8 +4,7 @@
 ├── Readme.md
 ├── bin
 ├── cmd
-│   ├── RunServer.go
-│   └── WebServer.go
+│   └── RunServer.go
 ├── config.yaml
 ├── docker
 ├── docs
@@ -18,6 +17,7 @@
 │   │   └── SuperUserHandler.go
 │   ├── initializers
 │   │   ├── ConnMongoDB.go
+│   │   ├── GetMongoDB.go
 │   │   ├── GinServer.go
 │   │   └── LoggerFile.go
 │   ├── middlewares
@@ -44,7 +44,10 @@
 │   ├── 20240911_165202_ApiServerLogs.log
 │   ├── 20240911_172628_ApiServerLogs.log
 │   ├── 20240911_173100_ApiServerLogs.log
-│   └── 20240911_173215_ApiServerLogs.log
+│   ├── 20240911_173215_ApiServerLogs.log
+│   ├── 20240911_174101_ApiServerLogs.log
+│   ├── 20240911_174213_ApiServerLogs.log
+│   └── 20240911_180258_ApiServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
@@ -54,8 +57,9 @@
 ├── templates
 │   ├── index.html
 │   ├── login.html
+│   ├── login_response.html
 │   ├── register.html
 │   └── register_success.html
 └── tree.txt
 
-23 directories, 36 files
+23 directories, 40 files

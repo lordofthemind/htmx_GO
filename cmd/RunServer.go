@@ -37,14 +37,17 @@ func RunServer() {
 	dsn := configs.MongoDBUrl
 	timeout := 30 * time.Second
 	maxRetries := 5
-	dbName := "htmx_go" // Replace with your actual database name
 
-	mongoCL, mongoDB, err := initializers.ConnectToMongoDB(ctx, dsn, timeout, maxRetries, dbName)
+	// Connect to mongoDB
+	mongoCL, err := initializers.ConnectToMongoDB(ctx, dsn, timeout, maxRetries)
 	if err != nil {
 		log.Fatalf("Error connecting to MongoDB: %v", err)
 	}
 	defer mongoCL.Disconnect(ctx) // Ensure MongoDB client is disconnected on shutdown
 
+	// Get the database instance
+	dbName := "htmx_go" // Replace with your actual database name
+	mongoDB := initializers.GetDatabase(mongoCL, dbName)
 	// Set up the Gin router with CORS
 	router, err := initializers.SetUpGinServerWithCORS()
 	// For without CORS use: router, err := initializers.SetUpGinServer()
