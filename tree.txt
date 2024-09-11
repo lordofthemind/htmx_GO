@@ -4,14 +4,19 @@
 ├── Readme.md
 ├── bin
 ├── cmd
+│   ├── ApiServer.go
+│   └── WebServer.go
 ├── docker
 ├── docs
 ├── go.mod
+├── go.sum
 ├── internals
 │   ├── configs
+│   │   └── MainConfigs.go
 │   ├── handlers
 │   ├── initializers
 │   │   ├── ConnMongoDB.go
+│   │   ├── GinServer.go
 │   │   └── LoggerFile.go
 │   ├── middlewares
 │   ├── repositories
@@ -20,8 +25,10 @@
 │   ├── tokens
 │   └── utils
 ├── logs
+│   └── 20240911_161349_ApiServerLogs.log
 ├── main.go
 ├── pkgs
+│   └── LoadTLSCertificates.go
 ├── scripts
 ├── sgin.yaml
 ├── ssl
@@ -29,4 +36,4 @@
 ├── templates
 └── tree.txt
 
-21 directories, 9 files
+21 directories, 16 files

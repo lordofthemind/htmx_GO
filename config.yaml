@@ -1,6 +1,6 @@
 # TLS/SSL Configuration
 tls:
-  use_tls: true
+  use_tls: false
 
 # Application Configuration
 application:
@@ -12,7 +12,7 @@ server:
 
 # Development Environment Variables
 development:
-  mongoDB_url: postgresql://postgres:postgressGinStructureSecret@localhost:5434/sGinStructure
+  mongoDB_url: mongodb://localhost:27017/
   cors:
     allowed_origins: http://localhost:3000
     allowed_methods: [GET, POST, PUT, DELETE]
