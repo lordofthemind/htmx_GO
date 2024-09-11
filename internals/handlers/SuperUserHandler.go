@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lordofthemind/htmx_GO/internals/responses"
 	"github.com/lordofthemind/htmx_GO/internals/services"
 )
 
@@ -16,41 +17,52 @@ func NewSuperuserHandler(service services.SuperuserService) *SuperuserHandler {
 }
 
 func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
+	// Get the response strategy from the context
+	strategy := c.MustGet("responseStrategy").(responses.ResponseStrategy)
+
 	var request struct {
 		Username string `json:"username" binding:"required"`
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required,min=6"`
 	}
+
+	// Bind JSON request
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusBadRequest)
 		return
 	}
 
+	// Register superuser
 	err := h.service.RegisterSuperuser(c.Request.Context(), request.Username, request.Email, request.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusBadRequest)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Superuser registered successfully"})
+	// Prepare response data
+	responseData := gin.H{"message": "Superuser registered successfully"}
+
+	// Respond using the chosen strategy
+	strategy.Respond(c, responseData, http.StatusOK)
 }
 
 func (h *SuperuserHandler) LoginSuperuser(c *gin.Context) {
+	strategy := c.MustGet("responseStrategy").(responses.ResponseStrategy)
+
 	var request struct {
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusBadRequest)
 		return
 	}
 
 	superuser, err := h.service.AuthenticateSuperuser(c.Request.Context(), request.Email, request.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusUnauthorized)
 		return
 	}
 
-	// Implement session or JWT for maintaining login state (e.g., issue a JWT token)
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "user": superuser})
+	strategy.Respond(c, gin.H{"message": "Login successful", "user": superuser}, http.StatusOK)
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/lordofthemind/htmx_GO/internals/configs"
 	"github.com/lordofthemind/htmx_GO/internals/handlers"
 	"github.com/lordofthemind/htmx_GO/internals/initializers"
+	"github.com/lordofthemind/htmx_GO/internals/middlewares"
 	"github.com/lordofthemind/htmx_GO/internals/repositories"
 	"github.com/lordofthemind/htmx_GO/internals/routes"
 	"github.com/lordofthemind/htmx_GO/internals/services"
@@ -67,6 +68,9 @@ func RunServer() {
 	repo := repositories.NewSuperuserRepository(mongoDB)
 	service := services.NewSuperuserService(repo)
 	handler := handlers.NewSuperuserHandler(service)
+
+	// In your `RunServer()` function
+	router.Use(middlewares.ResponseStrategyMiddleware())
 
 	// Register routes
 	routes.RegisterSuperuserRoutes(router, handler)
