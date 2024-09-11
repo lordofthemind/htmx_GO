@@ -4,8 +4,9 @@
 ├── Readme.md
 ├── bin
 ├── cmd
-│   ├── ApiServer.go
+│   ├── RunServer.go
 │   └── WebServer.go
+├── config.yaml
 ├── docker
 ├── docs
 ├── go.mod
@@ -25,15 +26,19 @@
 │   ├── tokens
 │   └── utils
 ├── logs
-│   └── 20240911_161349_ApiServerLogs.log
+│   ├── 20240911_161349_ApiServerLogs.log
+│   ├── 20240911_161534_ApiServerLogs.log
+│   ├── 20240911_161620_ApiServerLogs.log
+│   ├── 20240911_162304_ApiServerLogs.log
+│   ├── 20240911_162332_ApiServerLogs.log
+│   └── 20240911_162356_ApiServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
 ├── scripts
-├── sgin.yaml
 ├── ssl
 ├── static
 ├── templates
 └── tree.txt
 
-21 directories, 16 files
+21 directories, 21 files

@@ -8,7 +8,11 @@ import (
 	"time"
 
 	"github.com/lordofthemind/htmx_GO/internals/configs"
+	"github.com/lordofthemind/htmx_GO/internals/handlers"
 	"github.com/lordofthemind/htmx_GO/internals/initializers"
+	"github.com/lordofthemind/htmx_GO/internals/repositories"
+	"github.com/lordofthemind/htmx_GO/internals/routes"
+	"github.com/lordofthemind/htmx_GO/internals/services"
 )
 
 func RunServer() {
@@ -34,7 +38,7 @@ func RunServer() {
 	maxRetries := 5
 	dbName := "htmx_go" // Replace with your actual database name
 
-	mongoCL, _, err := initializers.ConnectToMongoDB(ctx, dsn, timeout, maxRetries, dbName)
+	mongoCL, mongoDB, err := initializers.ConnectToMongoDB(ctx, dsn, timeout, maxRetries, dbName)
 	if err != nil {
 		log.Fatalf("Error connecting to MongoDB: %v", err)
 	}
@@ -58,6 +62,14 @@ func RunServer() {
 	if err != nil {
 		log.Fatalf("Failed to start Gin server: %v", err)
 	}
+
+	// In runServer.go
+	repo := repositories.NewSuperuserRepository(mongoDB)
+	service := services.NewSuperuserService(repo)
+	handler := handlers.NewSuperuserHandler(service)
+
+	// Register routes
+	routes.RegisterSuperuserRoutes(router, handler)
 
 	// Handle graceful shutdown
 	initializers.GracefulShutdown(server)
