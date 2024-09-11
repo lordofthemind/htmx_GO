@@ -16,8 +16,22 @@ func NewSuperuserHandler(service services.SuperuserService) *SuperuserHandler {
 	return &SuperuserHandler{service: service}
 }
 
+// RegisterRoutes sets up the routes for the application.
+func (h *SuperuserHandler) Index(c *gin.Context) {
+	c.HTML(http.StatusOK, "index.html", nil)
+}
+
+// RegisterRoutes sets up the routes for the application.
+func (h *SuperuserHandler) Register(c *gin.Context) {
+	c.HTML(http.StatusOK, "register.html", nil)
+}
+
+// RegisterRoutes sets up the routes for the application.
+func (h *SuperuserHandler) Login(c *gin.Context) {
+	c.HTML(http.StatusOK, "login.html", nil)
+}
+
 func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
-	// Get the response strategy from the context
 	strategy := c.MustGet("responseStrategy").(responses.ResponseStrategy)
 
 	var request struct {
@@ -26,23 +40,18 @@ func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
 		Password string `json:"password" binding:"required,min=6"`
 	}
 
-	// Bind JSON request
 	if err := c.ShouldBindJSON(&request); err != nil {
 		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusBadRequest)
 		return
 	}
 
-	// Register superuser
 	err := h.service.RegisterSuperuser(c.Request.Context(), request.Username, request.Email, request.Password)
 	if err != nil {
 		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusBadRequest)
 		return
 	}
 
-	// Prepare response data
 	responseData := gin.H{"message": "Superuser registered successfully"}
-
-	// Respond using the chosen strategy
 	strategy.Respond(c, responseData, http.StatusOK)
 }
 

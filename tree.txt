@@ -15,15 +15,24 @@
 │   ├── configs
 │   │   └── MainConfigs.go
 │   ├── handlers
+│   │   └── SuperUserHandler.go
 │   ├── initializers
 │   │   ├── ConnMongoDB.go
 │   │   ├── GinServer.go
 │   │   └── LoggerFile.go
 │   ├── middlewares
+│   │   └── ResponseStrategyMiddleware.go
 │   ├── repositories
+│   │   └── SuperUserRepository.go
+│   ├── responses
+│   │   └── ResponseStrategy.go
 │   ├── routes
+│   │   └── SuperUserRoutes.go
 │   ├── services
+│   │   └── SuperUserService.go
 │   ├── tokens
+│   ├── types
+│   │   └── SuperUserType.go
 │   └── utils
 ├── logs
 │   ├── 20240911_161349_ApiServerLogs.log
@@ -31,7 +40,11 @@
 │   ├── 20240911_161620_ApiServerLogs.log
 │   ├── 20240911_162304_ApiServerLogs.log
 │   ├── 20240911_162332_ApiServerLogs.log
-│   └── 20240911_162356_ApiServerLogs.log
+│   ├── 20240911_162356_ApiServerLogs.log
+│   ├── 20240911_165202_ApiServerLogs.log
+│   ├── 20240911_172628_ApiServerLogs.log
+│   ├── 20240911_173100_ApiServerLogs.log
+│   └── 20240911_173215_ApiServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
@@ -39,6 +52,10 @@
 ├── ssl
 ├── static
 ├── templates
+│   ├── index.html
+│   ├── login.html
+│   ├── register.html
+│   └── register_success.html
 └── tree.txt
 
-21 directories, 21 files
+23 directories, 36 files
