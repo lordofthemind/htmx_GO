@@ -90,19 +90,19 @@ func StartGinServer(router *gin.Engine) error {
 	return nil
 }
 
-// StopGinServer gracefully shuts down the provided Gin server with a timeout.
-// Returns an error if the shutdown process fails.
-func StopGinServer(server *http.Server) error {
+// GracefulShutdown handles the graceful shutdown of the server.
+func GracefulShutdown(server *http.Server) {
+	// Create a channel to listen for interrupt signals
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
-	log.Println("Shutting down Gin server...")
+	log.Println("Shutting down server...")
 
-	// Context with timeout to handle shutdown
+	// Context with timeout for shutdown
 	ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Attempt to shutdown the server gracefully
+	// Attempt to shut down the server gracefully
 	if err := server.Shutdown(ctxShutDown); err != nil {
 		log.Printf("Server forced to shutdown: %v", err)
 
@@ -111,13 +111,11 @@ func StopGinServer(server *http.Server) error {
 			log.Printf("Retrying shutdown... attempt %d", retries+1)
 			if err := server.Shutdown(ctxShutDown); err == nil {
 				log.Println("Server shutdown successfully on retry")
-				return nil
+				return
 			}
 		}
-		return err
+		log.Fatalf("Failed to shutdown server gracefully after retries: %v", err)
 	}
 
 	log.Println("Server shutdown successfully")
-	log.Println("Server exiting")
-	return nil
 }

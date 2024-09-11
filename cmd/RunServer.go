@@ -5,15 +5,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
 	"time"
 
 	"github.com/lordofthemind/htmx_GO/internals/configs"
 	"github.com/lordofthemind/htmx_GO/internals/initializers"
 )
 
-func RunApiServer() {
+func RunServer() {
 	log.Println("Starting server...")
 
 	// Set up logging
@@ -62,35 +60,5 @@ func RunApiServer() {
 	}
 
 	// Handle graceful shutdown
-	gracefulShutdown(server)
-}
-
-// gracefulShutdown handles the graceful shutdown of the server.
-func gracefulShutdown(server *http.Server) {
-	// Create a channel to listen for interrupt signals
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-	log.Println("Shutting down server...")
-
-	// Context with timeout for shutdown
-	ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	// Attempt to shut down the server gracefully
-	if err := server.Shutdown(ctxShutDown); err != nil {
-		log.Printf("Server forced to shutdown: %v", err)
-
-		// Retry mechanism for shutdown
-		for retries := 0; retries < 3; retries++ {
-			log.Printf("Retrying shutdown... attempt %d", retries+1)
-			if err := server.Shutdown(ctxShutDown); err == nil {
-				log.Println("Server shutdown successfully on retry")
-				return
-			}
-		}
-		log.Fatalf("Failed to shutdown server gracefully after retries: %v", err)
-	}
-
-	log.Println("Server shutdown successfully")
+	initializers.GracefulShutdown(server)
 }
