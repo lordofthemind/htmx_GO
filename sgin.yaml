@@ -12,7 +12,7 @@ server:
 
 # Development Environment Variables
 development:
-  postgres_gorm_url: postgresql://postgres:postgressGinStructureSecret@localhost:5434/sGinStructure
+  mongoDB_url: postgresql://postgres:postgressGinStructureSecret@localhost:5434/sGinStructure
   cors:
     allowed_origins: http://localhost:3000
     allowed_methods: [GET, POST, PUT, DELETE]
@@ -24,7 +24,7 @@ development:
 
 # Testing Environment Variables
 testing:
-  postgres_gorm_url: postgresql://postgres:postgressGinStructureSecret@localhost:5434/sGinStructure
+  mongoDB_url: postgresql://postgres:postgressGinStructureSecret@localhost:5434/sGinStructure
   cors:
     allowed_origins: http://localhost:3000
     allowed_methods: [GET, POST, PUT, DELETE]
@@ -36,7 +36,7 @@ testing:
 
 # Production Environment Variables
 production:
-  postgres_gorm_url: postgresql://postgres:postgressGinStructureSecret@localhost:5434/sGinStructure
+  mongoDB_url: postgresql://postgres:postgressGinStructureSecret@localhost:5434/sGinStructure
   cors:
     allowed_origins: https://myproductionapp.com
     allowed_methods: [GET, POST]
@@ -48,7 +48,7 @@ production:
 
 # Staging Environment Variables
 staging:
-  postgres_gorm_url: postgresql://postgres:postgressGinStructureSecret@localhost:5434/sGinStructure
+  mongoDB_url: postgresql://postgres:postgressGinStructureSecret@localhost:5434/sGinStructure
   cors:
     allowed_origins: https://myproductionapp.com
     allowed_methods: [GET, POST]

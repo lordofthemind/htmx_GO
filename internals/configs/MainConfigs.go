@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -17,7 +18,7 @@ var (
 	AllowedMethods      []string
 	AllowedHeaders      []string
 	ExposedHeaders      []string
-	PostgreGormDBUrl    string
+	MongoDBUrl          string
 	AllowedCredentials  bool
 	TokenType           string
 	TokenSymmetricKey   string
@@ -25,11 +26,13 @@ var (
 )
 
 // InitializeServerConfig initializes the server configuration using Viper.
-func InitializeServerConfig(configFile string) {
+// It returns an error if any issues occur during the configuration setup.
+func InitializeServerConfig(configFile string) error {
 	viper.SetConfigFile(configFile)
 
+	// Attempt to read the config file
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading config file: %s", err)
+		return fmt.Errorf("error reading config file: %w", err)
 	}
 
 	// Load main configuration values
@@ -47,18 +50,19 @@ func InitializeServerConfig(configFile string) {
 	var err error
 	TokenAccessDuration, err = time.ParseDuration(durationStr)
 	if err != nil {
-		log.Fatalf("Invalid duration for token.access_duration: %v", err)
+		return fmt.Errorf("invalid duration for token.access_duration: %w", err)
 	}
 
 	log.Printf("Token access duration set to: %s", TokenAccessDuration.String())
 	log.Printf("Server is being initiated with %s environment", Environment)
+	return nil
 }
 
 // loadEnvironmentConfig loads the server configuration for the given environment.
 func loadEnvironmentConfig(env string) {
 	TlsKeyFile = viper.GetString(env + ".key_file")
 	TlsCertFile = viper.GetString(env + ".cert_file")
-	PostgreGormDBUrl = viper.GetString(env + ".postgres_gorm_url")
+	MongoDBUrl = viper.GetString(env + ".mongoDB_url")
 	AllowedOrigins = viper.GetStringSlice(env + ".cors.allowed_origins")
 	AllowedMethods = viper.GetStringSlice(env + ".cors.allowed_methods")
 	AllowedHeaders = viper.GetStringSlice(env + ".cors.allowed_headers")
