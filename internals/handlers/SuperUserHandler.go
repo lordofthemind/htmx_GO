@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator"
 	"github.com/lordofthemind/htmx_GO/internals/responses"
 	"github.com/lordofthemind/htmx_GO/internals/services"
 )
@@ -40,11 +41,17 @@ func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
 		Password string `json:"password" binding:"required,min=6"`
 	}
 
+	// Bind JSON and check for errors
 	if err := c.ShouldBindJSON(&request); err != nil {
-		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusBadRequest)
+		errorMessage := "Invalid input data"
+		if validationErr, ok := err.(validator.ValidationErrors); ok {
+			errorMessage = validationErr.Error()
+		}
+		strategy.Respond(c, gin.H{"error": errorMessage}, http.StatusBadRequest)
 		return
 	}
 
+	// Register superuser using the service
 	err := h.service.RegisterSuperuser(c.Request.Context(), request.Username, request.Email, request.Password)
 	if err != nil {
 		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusBadRequest)
@@ -63,13 +70,18 @@ func (h *SuperuserHandler) LoginSuperuser(c *gin.Context) {
 		Password string `json:"password" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusBadRequest)
+		errorMessage := "Invalid input data"
+		if validationErr, ok := err.(validator.ValidationErrors); ok {
+			errorMessage = validationErr.Error()
+		}
+		strategy.Respond(c, gin.H{"error": errorMessage}, http.StatusBadRequest)
 		return
 	}
 
+	// Authenticate superuser
 	superuser, err := h.service.AuthenticateSuperuser(c.Request.Context(), request.Email, request.Password)
 	if err != nil {
-		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusUnauthorized)
+		strategy.Respond(c, gin.H{"error": "Invalid email or password"}, http.StatusUnauthorized)
 		return
 	}
 

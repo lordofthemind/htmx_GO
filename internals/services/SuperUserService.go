@@ -32,7 +32,7 @@ func (s *superuserService) RegisterSuperuser(ctx context.Context, username, emai
 	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return errors.New("failed to hash password")
 	}
 
 	// Create superuser
@@ -49,7 +49,7 @@ func (s *superuserService) AuthenticateSuperuser(ctx context.Context, email, pas
 	// Find superuser by email
 	superuser, err := s.repo.FindSuperuserByEmail(ctx, email)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("superuser not found")
 	}
 
 	// Check the password

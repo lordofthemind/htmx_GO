@@ -5,6 +5,7 @@ go 1.22.3
 require (
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
+	github.com/go-playground/validator v9.31.0+incompatible
 	go.mongodb.org/mongo-driver v1.16.1
 )
 
@@ -46,6 +47,7 @@ require (
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
