@@ -1,0 +1,104 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script src="https://unpkg.com/htmx.org@1.8.4"></script>
+</head>
+<body>
+    <h1>Welcome</h1>
+    <p>
+        <a href="/superuser/register">Register</a>
+    </p>
+    <p>
+        <a href="/superuser/login">Login</a>
+    </p>
+</body>
+</html>
+
+
+<!-- templates/login_response.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Response</title>
+</head>
+<body>
+    <div id="login-response">
+        {{ .message }}
+    </div>
+</body>
+</html>
+
+
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://unpkg.com/htmx.org@1.8.4"></script>
+</head>
+<body>
+    <form hx-post="/superuser/login" hx-target="#login-response">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <div id="login-response"></div>
+</body>
+</html>
+
+
+<!-- templates/register_success.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Successful</title>
+</head>
+<body>
+    <h1>{{ .message }}</h1>
+</body>
+</html>
+
+
+<!-- templates/register.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <script src="https://unpkg.com/htmx.org@1.8.4"></script>
+</head>
+<body>
+    <h1>Register</h1>
+    <form hx-post="/superuser/register" hx-target="#registration-response" hx-swap="innerHTML">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required minlength="6">
+        </div>
+        <button type="submit">Register</button>
+    </form>
+    <div id="registration-response"></div>
+</body>
+</html>
+
+
+these codes are redundent, can we reduce by following dry principle or using some other technique
+fyi it's htmx with golang

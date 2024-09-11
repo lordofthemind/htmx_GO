@@ -10,6 +10,7 @@
 ├── docs
 ├── go.mod
 ├── go.sum
+├── heeh.txt
 ├── internals
 │   ├── configs
 │   │   └── MainConfigs.go
@@ -47,14 +48,25 @@
 │   ├── 20240911_173215_ApiServerLogs.log
 │   ├── 20240911_174101_ApiServerLogs.log
 │   ├── 20240911_174213_ApiServerLogs.log
-│   └── 20240911_180258_ApiServerLogs.log
+│   ├── 20240911_180258_ApiServerLogs.log
+│   ├── 20240911_181427_ApiServerLogs.log
+│   ├── 20240911_182315_ApiServerLogs.log
+│   ├── 20240911_183755_ApiServerLogs.log
+│   ├── 20240911_184959_ApiServerLogs.log
+│   ├── 20240911_185438_ApiServerLogs.log
+│   └── 20240911_190014_ApiServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
 ├── scripts
+│   ├── loginHtml.sh
+│   ├── loginJson.sh
+│   ├── registerHtml.sh
+│   └── registerJson.sh
 ├── ssl
 ├── static
 ├── templates
+│   ├── base.html
 │   ├── index.html
 │   ├── login.html
 │   ├── login_response.html
@@ -62,4 +74,4 @@
 │   └── register_success.html
 └── tree.txt
 
-23 directories, 40 files
+23 directories, 52 files
