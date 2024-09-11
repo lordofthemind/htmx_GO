@@ -1,0 +1,32 @@
+.
+├── Changelog.md
+├── Makefile
+├── Readme.md
+├── bin
+├── cmd
+├── docker
+├── docs
+├── go.mod
+├── internals
+│   ├── configs
+│   ├── handlers
+│   ├── initializers
+│   │   ├── ConnMongoDB.go
+│   │   └── LoggerFile.go
+│   ├── middlewares
+│   ├── repositories
+│   ├── routes
+│   ├── services
+│   ├── tokens
+│   └── utils
+├── logs
+├── main.go
+├── pkgs
+├── scripts
+├── sgin.yaml
+├── ssl
+├── static
+├── templates
+└── tree.txt
+
+21 directories, 9 files
