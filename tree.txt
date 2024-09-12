@@ -2,13 +2,6 @@
 ├── Changelog.md
 ├── Makefile
 ├── Readme.md
-├── build
-│   ├── linux
-│   │   └── HTMX_GO
-│   ├── mac
-│   │   └── HTMX_GO
-│   └── win
-│       └── HTMX_GO.exe
 ├── cmd
 │   └── RunServer.go
 ├── config.yaml
@@ -41,8 +34,6 @@
 │   ├── types
 │   │   └── SuperUserType.go
 │   └── utils
-├── logs
-│   └── 20240912_121147_ServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
@@ -67,7 +58,8 @@
 │   ├── register_success.html
 │   └── test.html
 ├── tmp
+│   ├── build-errors.log
 │   └── main
 └── tree.txt
 
-27 directories, 44 files
+22 directories, 41 files
