@@ -13,7 +13,13 @@ func ResponseStrategyMiddleware() gin.HandlerFunc {
 		switch {
 		case acceptHeader == "text/html" || c.GetHeader("HX-Request") == "true":
 			// For HTML or HTMX requests
-			c.Set("responseStrategy", &responses.HTMLResponseStrategy{Template: "default.html"})
+			template := "default.html"
+			if c.FullPath() == "/superuser/register" {
+				template = "register_success.html"
+			} else if c.FullPath() == "/superuser/login" {
+				template = "login_response.html"
+			}
+			c.Set("responseStrategy", &responses.HTMLResponseStrategy{Template: template})
 		case acceptHeader == "application/json":
 			// For JSON requests
 			c.Set("responseStrategy", &responses.JSONResponseStrategy{})

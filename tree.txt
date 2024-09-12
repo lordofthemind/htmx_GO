@@ -35,32 +35,6 @@
 │   ├── types
 │   │   └── SuperUserType.go
 │   └── utils
-├── logs
-│   ├── 20240911_161349_ApiServerLogs.log
-│   ├── 20240911_161534_ApiServerLogs.log
-│   ├── 20240911_161620_ApiServerLogs.log
-│   ├── 20240911_162304_ApiServerLogs.log
-│   ├── 20240911_162332_ApiServerLogs.log
-│   ├── 20240911_162356_ApiServerLogs.log
-│   ├── 20240911_165202_ApiServerLogs.log
-│   ├── 20240911_172628_ApiServerLogs.log
-│   ├── 20240911_173100_ApiServerLogs.log
-│   ├── 20240911_173215_ApiServerLogs.log
-│   ├── 20240911_174101_ApiServerLogs.log
-│   ├── 20240911_174213_ApiServerLogs.log
-│   ├── 20240911_180258_ApiServerLogs.log
-│   ├── 20240911_181427_ApiServerLogs.log
-│   ├── 20240911_182315_ApiServerLogs.log
-│   ├── 20240911_183755_ApiServerLogs.log
-│   ├── 20240911_184959_ApiServerLogs.log
-│   ├── 20240911_185438_ApiServerLogs.log
-│   ├── 20240911_190014_ApiServerLogs.log
-│   ├── 20240911_190430_ApiServerLogs.log
-│   ├── 20240911_190513_ApiServerLogs.log
-│   ├── 20240912_055556_ApiServerLogs.log
-│   ├── 20240912_060004_ApiServerLogs.log
-│   ├── 20240912_061408_ApiServerLogs.log
-│   └── 20240912_061845_ApiServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
@@ -79,6 +53,8 @@
 │   ├── login_response.html
 │   ├── register.html
 │   └── register_success.html
+├── tmp
+│   └── main
 └── tree.txt
 
-23 directories, 59 files
+23 directories, 35 files
