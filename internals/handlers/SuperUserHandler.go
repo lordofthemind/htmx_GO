@@ -33,7 +33,8 @@ func (h *SuperuserHandler) Login(c *gin.Context) {
 }
 
 func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
-	strategy := c.MustGet("responseStrategy").(responses.ResponseStrategy)
+	// Retrieve the response strategy from the context
+	strategy := responses.GetResponseStrategy(c)
 
 	var request struct {
 		Username string `json:"username" binding:"required"`
@@ -41,7 +42,6 @@ func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
 		Password string `json:"password" binding:"required,min=6"`
 	}
 
-	// Bind JSON and check for errors
 	if err := c.ShouldBindJSON(&request); err != nil {
 		errorMessage := "Invalid input data"
 		if validationErr, ok := err.(validator.ValidationErrors); ok {
@@ -51,7 +51,6 @@ func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
 		return
 	}
 
-	// Register superuser using the service
 	err := h.service.RegisterSuperuser(c.Request.Context(), request.Username, request.Email, request.Password)
 	if err != nil {
 		strategy.Respond(c, gin.H{"error": err.Error()}, http.StatusBadRequest)
@@ -63,7 +62,8 @@ func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
 }
 
 func (h *SuperuserHandler) LoginSuperuser(c *gin.Context) {
-	strategy := c.MustGet("responseStrategy").(responses.ResponseStrategy)
+	// Retrieve the response strategy from the context
+	strategy := responses.GetResponseStrategy(c)
 
 	var request struct {
 		Email    string `json:"email" binding:"required,email"`

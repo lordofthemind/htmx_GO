@@ -1,18 +1,24 @@
-<!-- templates/login.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <script src="https://unpkg.com/htmx.org@1.8.4"></script>
 </head>
+
 <body>
-    <form hx-post="/superuser/login" hx-target="#login-response">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-    </form>
-    <div id="login-response"></div>
+    <div class="container">
+        <h1>Login</h1>
+        <form hx-post="/superuser/login" hx-target="#login-response" hx-swap="outerHTML"
+            hx-headers='{"Accept": "application/json"}'>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <div id="login-response"></div>
+    </div>
 </body>
+
 </html>

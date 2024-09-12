@@ -5,19 +5,23 @@ import (
 	"github.com/lordofthemind/htmx_GO/internals/responses"
 )
 
+// ResponseStrategyMiddleware injects the appropriate response strategy into the context.
 func ResponseStrategyMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		acceptHeader := c.GetHeader("Accept")
 
-		var strategy responses.ResponseStrategy
-		if acceptHeader == "application/json" {
-			strategy = &responses.JSONResponseStrategy{}
-		} else {
-			strategy = &responses.HTMLResponseStrategy{
-				Template: "login_response.html", // or any appropriate template
-			}
+		switch {
+		case acceptHeader == "text/html" || c.GetHeader("HX-Request") == "true":
+			// For HTML or HTMX requests
+			c.Set("responseStrategy", &responses.HTMLResponseStrategy{Template: "default.html"})
+		case acceptHeader == "application/json":
+			// For JSON requests
+			c.Set("responseStrategy", &responses.JSONResponseStrategy{})
+		default:
+			// Fallback to HTMLResponseStrategy for any other cases
+			c.Set("responseStrategy", &responses.HTMLResponseStrategy{Template: "default.html"})
 		}
-		c.Set("responseStrategy", strategy)
+
 		c.Next()
 	}
 }

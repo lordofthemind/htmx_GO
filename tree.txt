@@ -54,7 +54,13 @@
 │   ├── 20240911_183755_ApiServerLogs.log
 │   ├── 20240911_184959_ApiServerLogs.log
 │   ├── 20240911_185438_ApiServerLogs.log
-│   └── 20240911_190014_ApiServerLogs.log
+│   ├── 20240911_190014_ApiServerLogs.log
+│   ├── 20240911_190430_ApiServerLogs.log
+│   ├── 20240911_190513_ApiServerLogs.log
+│   ├── 20240912_055556_ApiServerLogs.log
+│   ├── 20240912_060004_ApiServerLogs.log
+│   ├── 20240912_061408_ApiServerLogs.log
+│   └── 20240912_061845_ApiServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
@@ -67,6 +73,7 @@
 ├── static
 ├── templates
 │   ├── base.html
+│   ├── default.html
 │   ├── index.html
 │   ├── login.html
 │   ├── login_response.html
@@ -74,4 +81,4 @@
 │   └── register_success.html
 └── tree.txt
 
-23 directories, 52 files
+23 directories, 59 files
