@@ -20,14 +20,14 @@ func RunServer() {
 	log.Println("Starting server...")
 
 	// Set up logging
-	logFile, err := initializers.SetUpLoggerFile("ApiServerLogs.log")
+	logFile, err := initializers.SetUpLoggerFile("ServerLogs.log")
 	if err != nil {
 		log.Fatalf("Failed to set up logger: %v", err)
 	}
 	defer logFile.Close()
 
 	// Initialize server configuration
-	err = configs.InitializeServerConfig("config.yaml")
+	err = configs.InitializeServerConfig("sGin.yaml")
 	if err != nil {
 		log.Fatalf("Failed to initialize server configuration: %v", err)
 	}
