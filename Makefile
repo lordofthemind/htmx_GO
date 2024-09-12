@@ -34,10 +34,37 @@ dropdb_mongodb: strmgdb ## Drop MongoDB database
 	@echo "Dropping MongoDB database..."
 	docker exec -it $(MONGODB_CONTAINER_NAME) mongosh --eval "db.getSiblingDB('$(MONGODB_DB_NAME)').dropDatabase()"
 
+build_win: ## Build the application for Windows
+	GOOS=windows GOARCH=amd64 go build -o ./build/win/liveFxGraphGo.exe main.go
+
+build_lin: ## Build the application for Linux
+	GOOS=linux GOARCH=amd64 go build -o ./build/linux/liveFxGraphGo main.go
+
+build_mac: ## Build the application for MacOS
+	GOOS=darwin GOARCH=amd64 go build -o ./build/mac/liveFxGraphGo main.go
+
+build: ## Build the application for all platforms and saves it in build folder
+	$(MAKE) build_lin
+	$(MAKE) build_win
+	$(MAKE) build_mac
+
+# Testing commands
+test: ## Run tests
+	go test ./...
+
+lint: ## Run linter
+	golangci-lint run
+
+# Utility commands
+clean: ## Clean the build
+	rm -rf build/
+
+tr: ## Generate directory tree
+	tree > tree.txt
 
 # Help command
 help: ## Show this help message
 	@echo "Available commands:"
 	@awk 'BEGIN {FS = ":.*##"; printf "\n\033[1m%-12s\033[0m %s\n\n", "Command", "Description"} /^[a-zA-Z_-]+:.*?##/ { printf "\033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
-.PHONY: crtmgdb strmgdb stpmgdb rmvmgdb createdb_mongodb help
+.PHONY: crtmgdb strmgdb stpmgdb rmvmgdb createdb_mongodb build_win build_lin build_mac build test lint clean tr help

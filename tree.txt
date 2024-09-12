@@ -2,7 +2,7 @@
 ├── Changelog.md
 ├── Makefile
 ├── Readme.md
-├── bin
+├── build
 ├── cmd
 │   └── RunServer.go
 ├── config.yaml
@@ -35,6 +35,83 @@
 │   ├── types
 │   │   └── SuperUserType.go
 │   └── utils
+├── logs
+│   ├── 20240912_084205_ApiServerLogs.log
+│   ├── 20240912_084322_ApiServerLogs.log
+│   ├── 20240912_084502_ApiServerLogs.log
+│   ├── 20240912_084617_ApiServerLogs.log
+│   ├── 20240912_084654_ApiServerLogs.log
+│   ├── 20240912_084719_ApiServerLogs.log
+│   ├── 20240912_085010_ApiServerLogs.log
+│   ├── 20240912_085104_ApiServerLogs.log
+│   ├── 20240912_085712_ApiServerLogs.log
+│   ├── 20240912_085801_ApiServerLogs.log
+│   ├── 20240912_090926_ApiServerLogs.log
+│   ├── 20240912_091153_ApiServerLogs.log
+│   ├── 20240912_091401_ApiServerLogs.log
+│   ├── 20240912_091423_ApiServerLogs.log
+│   ├── 20240912_091448_ApiServerLogs.log
+│   ├── 20240912_091533_ApiServerLogs.log
+│   ├── 20240912_091538_ApiServerLogs.log
+│   ├── 20240912_091841_ApiServerLogs.log
+│   ├── 20240912_091855_ApiServerLogs.log
+│   ├── 20240912_091924_ApiServerLogs.log
+│   ├── 20240912_091940_ApiServerLogs.log
+│   ├── 20240912_091942_ApiServerLogs.log
+│   ├── 20240912_091945_ApiServerLogs.log
+│   ├── 20240912_092036_ApiServerLogs.log
+│   ├── 20240912_092105_ApiServerLogs.log
+│   ├── 20240912_092412_ApiServerLogs.log
+│   ├── 20240912_092616_ApiServerLogs.log
+│   ├── 20240912_093116_ApiServerLogs.log
+│   ├── 20240912_093634_ApiServerLogs.log
+│   ├── 20240912_093653_ApiServerLogs.log
+│   ├── 20240912_093705_ApiServerLogs.log
+│   ├── 20240912_093722_ApiServerLogs.log
+│   ├── 20240912_093736_ApiServerLogs.log
+│   ├── 20240912_094816_ApiServerLogs.log
+│   ├── 20240912_094846_ApiServerLogs.log
+│   ├── 20240912_094851_ApiServerLogs.log
+│   ├── 20240912_095235_ApiServerLogs.log
+│   ├── 20240912_100928_ApiServerLogs.log
+│   ├── 20240912_101019_ApiServerLogs.log
+│   ├── 20240912_101128_ApiServerLogs.log
+│   ├── 20240912_101154_ApiServerLogs.log
+│   ├── 20240912_101205_ApiServerLogs.log
+│   ├── 20240912_101234_ApiServerLogs.log
+│   ├── 20240912_101235_ApiServerLogs.log
+│   ├── 20240912_101248_ApiServerLogs.log
+│   ├── 20240912_101341_ApiServerLogs.log
+│   ├── 20240912_101520_ApiServerLogs.log
+│   ├── 20240912_101551_ApiServerLogs.log
+│   ├── 20240912_101631_ApiServerLogs.log
+│   ├── 20240912_101707_ApiServerLogs.log
+│   ├── 20240912_101720_ApiServerLogs.log
+│   ├── 20240912_101748_ApiServerLogs.log
+│   ├── 20240912_101811_ApiServerLogs.log
+│   ├── 20240912_101833_ApiServerLogs.log
+│   ├── 20240912_101931_ApiServerLogs.log
+│   ├── 20240912_102103_ApiServerLogs.log
+│   ├── 20240912_102342_ApiServerLogs.log
+│   ├── 20240912_102406_ApiServerLogs.log
+│   ├── 20240912_102428_ApiServerLogs.log
+│   ├── 20240912_102434_ApiServerLogs.log
+│   ├── 20240912_102444_ApiServerLogs.log
+│   ├── 20240912_102457_ApiServerLogs.log
+│   ├── 20240912_102514_ApiServerLogs.log
+│   ├── 20240912_102528_ApiServerLogs.log
+│   ├── 20240912_102541_ApiServerLogs.log
+│   ├── 20240912_102613_ApiServerLogs.log
+│   ├── 20240912_102621_ApiServerLogs.log
+│   ├── 20240912_103014_ApiServerLogs.log
+│   ├── 20240912_103027_ApiServerLogs.log
+│   ├── 20240912_103028_ApiServerLogs.log
+│   ├── 20240912_103043_ApiServerLogs.log
+│   ├── 20240912_103202_ApiServerLogs.log
+│   ├── 20240912_103519_ApiServerLogs.log
+│   ├── 20240912_103627_ApiServerLogs.log
+│   ├── 20240912_103651_ApiServerLogs.log
+│   └── 20240912_103717_ApiServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
@@ -48,16 +125,19 @@
 ├── templates
 │   ├── base.html
 │   ├── default.html
+│   ├── error.html
 │   ├── index.html
 │   ├── login.html
 │   ├── login_error.html
+│   ├── login_form.html
 │   ├── login_response.html
 │   ├── register.html
 │   ├── register_error.html
-│   └── register_success.html
+│   ├── register_success.html
+│   └── test.html
 ├── tmp
 │   ├── build-errors.log
 │   └── main
 └── tree.txt
 
-23 directories, 38 files
+24 directories, 117 files
