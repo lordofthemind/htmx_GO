@@ -22,6 +22,7 @@
 │   │   ├── GinServer.go
 │   │   └── LoggerFile.go
 │   ├── middlewares
+│   │   ├── JWTMiddleware.go
 │   │   └── ResponseStrategyMiddleware.go
 │   ├── repositories
 │   │   └── SuperUserRepository.go
@@ -32,9 +33,12 @@
 │   ├── services
 │   │   └── SuperUserService.go
 │   ├── tokens
+│   │   └── JwtToken.go
 │   ├── types
 │   │   └── SuperUserType.go
 │   └── utils
+├── logs
+│   └── 20240912_184123_ServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
@@ -47,13 +51,14 @@
 ├── static
 ├── templates
 │   ├── base.html
+│   ├── dashboard.html
 │   ├── default.html
 │   ├── error.html
 │   ├── index.html
 │   ├── login.html
 │   ├── login_error.html
 │   ├── login_form.html
-│   ├── login_response.html
+│   ├── login_success.html
 │   ├── register.html
 │   ├── register_error.html
 │   ├── register_success.html
@@ -63,4 +68,4 @@
 │   └── main
 └── tree.txt
 
-22 directories, 42 files
+23 directories, 46 files

@@ -24,15 +24,27 @@ func NewSuperuserHandler(service services.SuperuserService, tokenManager tokens.
 }
 
 func (h *SuperuserHandler) IndexRender(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", gin.H{"title": "Index"})
+	strategy := responses.GetResponseStrategy(c)
+	strategy.Respond(c, map[string]interface{}{
+		"template": "index.html",
+		"title":    "Index",
+	}, http.StatusOK)
 }
 
 func (h *SuperuserHandler) RegisterRender(c *gin.Context) {
-	c.HTML(http.StatusOK, "register.html", gin.H{"title": "Register"})
+	strategy := responses.GetResponseStrategy(c)
+	strategy.Respond(c, map[string]interface{}{
+		"template": "register.html",
+		"title":    "Register",
+	}, http.StatusOK)
 }
 
 func (h *SuperuserHandler) LoginRender(c *gin.Context) {
-	c.HTML(http.StatusOK, "login.html", gin.H{"title": "Login"})
+	strategy := responses.GetResponseStrategy(c)
+	strategy.Respond(c, map[string]interface{}{
+		"template": "login.html",
+		"title":    "Login",
+	}, http.StatusOK)
 }
 
 func (h *SuperuserHandler) RegisterSuperuserHandler(c *gin.Context) {
@@ -49,17 +61,26 @@ func (h *SuperuserHandler) RegisterSuperuserHandler(c *gin.Context) {
 		if validationErr, ok := err.(validator.ValidationErrors); ok {
 			errorMessage = validationErr.Error()
 		}
-		strategy.Respond(c, map[string]interface{}{"template": "register_error.html", "error": errorMessage}, http.StatusBadRequest)
+		strategy.Respond(c, map[string]interface{}{
+			"template": "register_error.html",
+			"error":    errorMessage,
+		}, http.StatusBadRequest)
 		return
 	}
 
 	err := h.service.RegisterSuperuser(c.Request.Context(), request.Username, request.Email, request.Password)
 	if err != nil {
-		strategy.Respond(c, map[string]interface{}{"template": "register_error.html", "error": err.Error()}, http.StatusBadRequest)
+		strategy.Respond(c, map[string]interface{}{
+			"template": "register_error.html",
+			"error":    err.Error(),
+		}, http.StatusBadRequest)
 		return
 	}
 
-	strategy.Respond(c, map[string]interface{}{"template": "register_success.html", "message": "Superuser registered successfully"}, http.StatusOK)
+	strategy.Respond(c, map[string]interface{}{
+		"template": "register_success.html",
+		"message":  "Superuser registered successfully",
+	}, http.StatusOK)
 }
 
 // LoginSuperuser handles the login process for superusers.
@@ -76,21 +97,30 @@ func (h *SuperuserHandler) LoginSuperuserHandler(c *gin.Context) {
 		if validationErr, ok := err.(validator.ValidationErrors); ok {
 			errorMessage = validationErr.Error()
 		}
-		strategy.Respond(c, map[string]interface{}{"template": "login_error.html", "error": errorMessage}, http.StatusBadRequest)
+		strategy.Respond(c, map[string]interface{}{
+			"template": "login_error.html",
+			"error":    errorMessage,
+		}, http.StatusBadRequest)
 		return
 	}
 
 	// Check if the user exists
 	user, err := h.service.AuthenticateSuperuser(c.Request.Context(), request.Email, request.Password)
 	if err != nil {
-		strategy.Respond(c, map[string]interface{}{"template": "login_error.html", "error": "Invalid email or password"}, http.StatusUnauthorized)
+		strategy.Respond(c, map[string]interface{}{
+			"template": "login_error.html",
+			"error":    "Invalid email or password",
+		}, http.StatusUnauthorized)
 		return
 	}
 
 	// Generate JWT token using the TokenManager
 	token, err := h.tokenManager.GenerateJWT(user.ID.Hex())
 	if err != nil {
-		strategy.Respond(c, map[string]interface{}{"template": "login_error.html", "error": "Failed to generate token"}, http.StatusInternalServerError)
+		strategy.Respond(c, map[string]interface{}{
+			"template": "login_error.html",
+			"error":    "Failed to generate token",
+		}, http.StatusInternalServerError)
 		return
 	}
 
@@ -99,7 +129,11 @@ func (h *SuperuserHandler) LoginSuperuserHandler(c *gin.Context) {
 	c.SetCookie("SuperUserAuthorization", token, int(configs.TokenAccessDuration.Seconds()), "/", "", false, true)
 
 	// Respond with success message
-	strategy.Respond(c, map[string]interface{}{"template": "login_success.html", "message": "Login successful", "user_id": user.ID}, http.StatusOK)
+	strategy.Respond(c, map[string]interface{}{
+		"template": "login_success.html",
+		"message":  "Login successful",
+		"user_id":  user.ID,
+	}, http.StatusOK)
 }
 
 // Logout handler
@@ -109,7 +143,10 @@ func (h *SuperuserHandler) LogoutSuperuserHandler(c *gin.Context) {
 
 	// Respond with success message
 	strategy := responses.GetResponseStrategy(c)
-	strategy.Respond(c, map[string]interface{}{"template": "logout_success.html", "message": "Logout successful"}, http.StatusOK)
+	strategy.Respond(c, map[string]interface{}{
+		"template": "index.html",
+		"message":  "Logout successful",
+	}, http.StatusOK)
 }
 
 // Dashboard renders the dashboard page using HTMX
@@ -129,6 +166,8 @@ func (h *SuperuserHandler) DashboardSuperuserHandler(c *gin.Context) {
 func (h *SuperuserHandler) TestTemplate(c *gin.Context) {
 	strategy := responses.GetResponseStrategy(c)
 
-	strategy.Respond(c, map[string]interface{}{"template": "test.html"}, http.StatusOK)
+	strategy.Respond(c, map[string]interface{}{
+		"template": "test.html",
+	}, http.StatusOK)
 
 }
