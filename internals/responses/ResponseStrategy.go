@@ -15,9 +15,10 @@ type ResponseStrategy interface {
 // JSONResponseStrategy implements ResponseStrategy for JSON responses.
 type JSONResponseStrategy struct{}
 
-// Respond sends a JSON response.
+// Respond formats and sends a JSON response
 func (r *JSONResponseStrategy) Respond(c *gin.Context, data interface{}, status int) {
-	c.JSON(status, data)
+	standardResponse := NewResponse(status, "Request processed", data, nil)
+	c.JSON(status, standardResponse)
 }
 
 // HTMLResponseStrategy implements ResponseStrategy for HTML responses.

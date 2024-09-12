@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit Profile</title>
+</head>
+<body>
+    <h1>Edit Profile</h1>
+    <form action="/profile/update" method="post">
+        <label for="username">Username</label>
+        <input type="text" name="username" value="{{.username}}" required>
+        <label for="password">Password</label>
+        <input type="password" name="password">
+        <button type="submit">Save</button>
+    </form>
+    {{if .error}}<p>{{.error}}</p>{{end}}
+</body>
+</html>
