@@ -43,17 +43,17 @@ func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
 		if validationErr, ok := err.(validator.ValidationErrors); ok {
 			errorMessage = validationErr.Error()
 		}
-		strategy.Respond(c, gin.H{"template": "register_error.html", "error": errorMessage}, http.StatusBadRequest)
+		strategy.Respond(c, map[string]interface{}{"template": "register_error.html", "error": errorMessage}, http.StatusBadRequest)
 		return
 	}
 
 	err := h.service.RegisterSuperuser(c.Request.Context(), request.Username, request.Email, request.Password)
 	if err != nil {
-		strategy.Respond(c, gin.H{"template": "register_error.html", "error": err.Error()}, http.StatusBadRequest)
+		strategy.Respond(c, map[string]interface{}{"template": "register_error.html", "error": err.Error()}, http.StatusBadRequest)
 		return
 	}
 
-	strategy.Respond(c, gin.H{"template": "register_success.html", "message": "Superuser registered successfully"}, http.StatusOK)
+	strategy.Respond(c, map[string]interface{}{"template": "register_success.html", "message": "Superuser registered successfully"}, http.StatusOK)
 }
 
 func (h *SuperuserHandler) LoginSuperuser(c *gin.Context) {
@@ -69,21 +69,22 @@ func (h *SuperuserHandler) LoginSuperuser(c *gin.Context) {
 		if validationErr, ok := err.(validator.ValidationErrors); ok {
 			errorMessage = validationErr.Error()
 		}
-		strategy.Respond(c, gin.H{"template": "login_error.html", "error": errorMessage}, http.StatusBadRequest)
+		strategy.Respond(c, map[string]interface{}{"template": "login_error.html", "error": errorMessage}, http.StatusBadRequest)
 		return
 	}
 
 	superuser, err := h.service.AuthenticateSuperuser(c.Request.Context(), request.Email, request.Password)
 	if err != nil {
-		strategy.Respond(c, gin.H{"template": "login_error.html", "error": "Invalid email or password"}, http.StatusUnauthorized)
+		strategy.Respond(c, map[string]interface{}{"template": "login_error.html", "error": "Invalid email or password"}, http.StatusUnauthorized)
 		return
 	}
 
-	strategy.Respond(c, gin.H{"template": "login_response.html", "message": "Login successful", "user": superuser}, http.StatusOK)
+	strategy.Respond(c, map[string]interface{}{"template": "login_response.html", "message": "Login successful", "user": superuser}, http.StatusOK)
 }
 
 func (h *SuperuserHandler) TestTemplate(c *gin.Context) {
-	c.HTML(http.StatusOK, "register_success.html", gin.H{
-		"message": "Test success!",
-	})
+	strategy := responses.GetResponseStrategy(c)
+
+	strategy.Respond(c, map[string]interface{}{"template": "test.html"}, http.StatusOK)
+
 }

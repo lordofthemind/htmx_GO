@@ -25,7 +25,7 @@ func SetUpGinServerWithCORS() (*gin.Engine, error) {
 	router.Static("/static", "./static")
 
 	// Load HTML templates
-	router.LoadHTMLGlob("templates/*")
+	router.LoadHTMLGlob("templates/*.html")
 
 	// Configure CORS using application-specific settings
 	config := cors.Config{
@@ -55,7 +55,7 @@ func SetUpGinServer() (*gin.Engine, error) {
 	router.Static("/static", "./static")
 
 	// Load HTML templates
-	router.LoadHTMLGlob("templates/*")
+	router.LoadHTMLGlob("templates/*.html")
 	return router, nil
 }
 

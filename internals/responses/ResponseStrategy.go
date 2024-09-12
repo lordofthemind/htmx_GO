@@ -25,35 +25,67 @@ type HTMLResponseStrategy struct {
 	Template string // default template
 }
 
-// Respond sends an HTML response using a specified template.
 func (r *HTMLResponseStrategy) Respond(c *gin.Context, data interface{}, status int) {
-	// Log the data for debugging
 	fmt.Printf("Data passed to Respond: %+v\n", data)
 
-	// Ensure data is of type map[string]interface{}
-	if dataMap, ok := data.(map[string]interface{}); ok {
-		// Check for the template key
-		if templateName, exists := dataMap["template"]; exists {
-			// Ensure the template is a string
-			if templateNameStr, isString := templateName.(string); isString {
-				fmt.Printf("Using template: %s\n", templateNameStr) // Log the template being used
-				// Remove the "template" key from the map before passing to the HTML method
-				delete(dataMap, "template")
-				c.HTML(status, templateNameStr, dataMap)
-				return
-			} else {
-				fmt.Println("Error: template is not a string")
-			}
-		} else {
-			fmt.Println("Error: template key not found")
-		}
-	} else {
+	dataMap, ok := data.(map[string]interface{})
+	if !ok {
 		fmt.Println("Error: data is not a map[string]interface{}")
+		c.HTML(status, "error.html", gin.H{"error": "Internal Server Error"})
+		return
 	}
 
-	// Fall back to default template if no valid template is found
-	c.HTML(status, r.Template, data)
+	templateName, exists := dataMap["template"]
+	if !exists {
+		fmt.Println("Error: template key not found in data")
+		c.HTML(status, "error.html", gin.H{"error": "Template not specified"})
+		return
+	}
+
+	templateNameStr, isString := templateName.(string)
+	if !isString {
+		fmt.Println("Error: template name is not a string")
+		c.HTML(status, "error.html", gin.H{"error": "Invalid template name"})
+		return
+	}
+
+	fmt.Printf("Using template: %s\n", templateNameStr)
+	delete(dataMap, "template")
+	c.HTML(status, templateNameStr, dataMap)
 }
+
+// func (r *HTMLResponseStrategy) Respond(c *gin.Context, data interface{}, status int) {
+// 	// Log the data for debugging
+// 	fmt.Printf("Data passed to Respond: %+v\n", data)
+
+// 	// Check if data is a map[string]interface{}
+// 	dataMap, ok := data.(map[string]interface{})
+// 	if !ok {
+// 		fmt.Println("Error: data is not a map[string]interface{}")
+// 		c.HTML(status, "error.html", gin.H{"error": "Internal Server Error"})
+// 		return
+// 	}
+
+// 	// Check if template key exists and is a string
+// 	templateName, exists := dataMap["template"]
+// 	if !exists {
+// 		fmt.Println("Error: template key not found in data")
+// 		c.HTML(status, "error.html", gin.H{"error": "Template not specified"})
+// 		return
+// 	}
+
+// 	templateNameStr, isString := templateName.(string)
+// 	if !isString {
+// 		fmt.Println("Error: template name is not a string")
+// 		c.HTML(status, "error.html", gin.H{"error": "Invalid template name"})
+// 		return
+// 	}
+
+// 	fmt.Printf("Using template: %s\n", templateNameStr)
+// 	// Remove the "template" key before passing data to c.HTML
+// 	delete(dataMap, "template")
+// 	c.HTML(status, templateNameStr, dataMap)
+// }
 
 // DefaultResponseStrategy is a fallback strategy if none is set in the context.
 type DefaultResponseStrategy struct{}

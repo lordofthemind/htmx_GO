@@ -13,5 +13,6 @@ func RegisterSuperuserRoutes(router *gin.Engine, superuserHandler *handlers.Supe
 		superuserRoutes.GET("/login", superuserHandler.Login)
 		superuserRoutes.POST("/register", superuserHandler.RegisterSuperuser)
 		superuserRoutes.POST("/login", superuserHandler.LoginSuperuser)
+		superuserRoutes.GET("/test", superuserHandler.TestTemplate)
 	}
 }
