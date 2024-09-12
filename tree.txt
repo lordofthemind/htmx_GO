@@ -1,7 +1,15 @@
 .
 ├── Changelog.md
+├── Future.md
 ├── Makefile
 ├── Readme.md
+├── build
+│   ├── linux
+│   │   └── HTMX_GO
+│   ├── mac
+│   │   └── HTMX_GO
+│   └── win
+│       └── HTMX_GO.exe
 ├── cmd
 │   └── RunServer.go
 ├── config.yaml
@@ -62,4 +70,4 @@
 │   └── main
 └── tree.txt
 
-22 directories, 41 files
+26 directories, 45 files
