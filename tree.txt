@@ -50,11 +50,14 @@
 │   ├── default.html
 │   ├── index.html
 │   ├── login.html
+│   ├── login_error.html
 │   ├── login_response.html
 │   ├── register.html
+│   ├── register_error.html
 │   └── register_success.html
 ├── tmp
+│   ├── build-errors.log
 │   └── main
 └── tree.txt
 
-23 directories, 35 files
+23 directories, 38 files

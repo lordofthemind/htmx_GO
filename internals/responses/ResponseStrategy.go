@@ -21,14 +21,23 @@ func (r *JSONResponseStrategy) Respond(c *gin.Context, data interface{}, status 
 
 // HTMLResponseStrategy implements ResponseStrategy for HTML responses.
 type HTMLResponseStrategy struct {
-	Template string
+	Template string // default template
 }
 
 // Respond sends an HTML response using a specified template.
 func (r *HTMLResponseStrategy) Respond(c *gin.Context, data interface{}, status int) {
-	// Call c.HTML without capturing a return value, as it returns nothing
+	// If the data includes a "template" field, use it as the template name
+	if dataMap, ok := data.(map[string]interface{}); ok {
+		if templateName, exists := dataMap["template"]; exists {
+			if templateNameStr, isString := templateName.(string); isString {
+				c.HTML(status, templateNameStr, dataMap)
+				return
+			}
+		}
+	}
+
+	// Fall back to the default template if no "template" is provided
 	c.HTML(status, r.Template, data)
-	// Log if you want to track rendering or add additional error handling in Gin context
 }
 
 // DefaultResponseStrategy is a fallback strategy if none is set in the context.
