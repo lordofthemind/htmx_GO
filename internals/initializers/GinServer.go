@@ -21,11 +21,11 @@ import (
 func SetUpGinServerWithCORS() (*gin.Engine, error) {
 	router := gin.Default()
 
-	// Serve static files (if any)
-	router.Static("/static", "./static")
+	// Serve static files using the path from the config
+	router.Static("/static", configs.StaticPath)
 
-	// Load HTML templates
-	router.LoadHTMLGlob("templates/*.html")
+	// Load HTML templates using the path from the config
+	router.LoadHTMLGlob(configs.TemplatePath)
 
 	// Configure CORS using application-specific settings
 	config := cors.Config{
@@ -51,11 +51,11 @@ func SetUpGinServerWithCORS() (*gin.Engine, error) {
 func SetUpGinServer() (*gin.Engine, error) {
 	router := gin.Default()
 
-	// Serve static files (if any)
-	router.Static("/static", "./static")
+	// Serve static files using the path from the config
+	router.Static("/static", configs.StaticPath)
 
-	// Load HTML templates
-	router.LoadHTMLGlob("templates/*.html")
+	// Load HTML templates using the path from the config
+	router.LoadHTMLGlob(configs.TemplatePath)
 	return router, nil
 }
 

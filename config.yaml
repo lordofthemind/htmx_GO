@@ -5,6 +5,8 @@ tls:
 # Application Configuration
 application:
   config: development  # options: development, production, testing, staging
+  template_path: "templates/*.html"
+  static_path: "./static"
 
 # Server Configuration
 server:

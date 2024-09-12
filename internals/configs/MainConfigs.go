@@ -11,17 +11,19 @@ import (
 var (
 	Port                int
 	UseTLS              bool
+	AllowedCredentials  bool
+	TokenType           string
+	StaticPath          string
+	MongoDBUrl          string
 	TlsKeyFile          string
-	TlsCertFile         string
 	Environment         string
+	TlsCertFile         string
+	TemplatePath        string
+	TokenSymmetricKey   string
 	AllowedOrigins      []string
 	AllowedMethods      []string
 	AllowedHeaders      []string
 	ExposedHeaders      []string
-	MongoDBUrl          string
-	AllowedCredentials  bool
-	TokenType           string
-	TokenSymmetricKey   string
 	TokenAccessDuration time.Duration
 )
 
@@ -38,6 +40,8 @@ func InitializeServerConfig(configFile string) error {
 	// Load main configuration values
 	Port = viper.GetInt("server.port")
 	Environment = viper.GetString("application.config")
+	TemplatePath = viper.GetString("application.template_path")
+	StaticPath = viper.GetString("application.static_path")
 	UseTLS = viper.GetBool("tls.use_tls")
 	TokenSymmetricKey = viper.GetString("token.symmetric_key")
 	TokenType = viper.GetString("token.type")

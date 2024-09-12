@@ -42,13 +42,7 @@
 │   │   └── SuperUserType.go
 │   └── utils
 ├── logs
-│   ├── 20240912_110042_ServerLogs.log
-│   ├── 20240912_110103_ServerLogs.log
-│   ├── 20240912_110425_ServerLogs.log
-│   ├── 20240912_110507_ServerLogs.log
-│   ├── 20240912_111324_ServerLogs.log
-│   ├── 20240912_111707_ServerLogs.log
-│   └── 20240912_111730_ServerLogs.log
+│   └── 20240912_121147_ServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
@@ -76,4 +70,4 @@
 │   └── main
 └── tree.txt
 
-27 directories, 50 files
+27 directories, 44 files
