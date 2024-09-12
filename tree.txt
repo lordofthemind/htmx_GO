@@ -11,6 +11,7 @@
 │       └── HTMX_GO.exe
 ├── cmd
 │   └── RunServer.go
+├── config.yaml
 ├── docker
 ├── docs
 ├── go.mod
@@ -43,11 +44,14 @@
 ├── logs
 │   ├── 20240912_110042_ServerLogs.log
 │   ├── 20240912_110103_ServerLogs.log
-│   └── 20240912_110425_ServerLogs.log
+│   ├── 20240912_110425_ServerLogs.log
+│   ├── 20240912_110507_ServerLogs.log
+│   ├── 20240912_111324_ServerLogs.log
+│   ├── 20240912_111707_ServerLogs.log
+│   └── 20240912_111730_ServerLogs.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
-├── sGin.yaml
 ├── scripts
 │   ├── loginHtml.sh
 │   ├── loginJson.sh
@@ -68,6 +72,8 @@
 │   ├── register_error.html
 │   ├── register_success.html
 │   └── test.html
+├── tmp
+│   └── main
 └── tree.txt
 
-26 directories, 45 files
+27 directories, 50 files

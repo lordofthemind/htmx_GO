@@ -27,7 +27,7 @@ func RunServer() {
 	defer logFile.Close()
 
 	// Initialize server configuration
-	err = configs.InitializeServerConfig("sGin.yaml")
+	err = configs.InitializeServerConfig("config.yaml")
 	if err != nil {
 		log.Fatalf("Failed to initialize server configuration: %v", err)
 	}
