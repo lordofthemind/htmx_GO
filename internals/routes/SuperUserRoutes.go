@@ -10,19 +10,19 @@ import (
 func RegisterSuperuserRoutes(router *gin.Engine, superuserHandler *handlers.SuperuserHandler, tokenManager tokens.TokenManager) {
 	superuserRoutes := router.Group("/superuser")
 	{
-		superuserRoutes.GET("/", superuserHandler.Index)
-		superuserRoutes.GET("/register", superuserHandler.Register)
-		superuserRoutes.GET("/login", superuserHandler.Login)
-		superuserRoutes.POST("/register", superuserHandler.RegisterSuperuser)
-		superuserRoutes.POST("/login", superuserHandler.LoginSuperuser)
+		superuserRoutes.GET("/", superuserHandler.IndexRender)
+		superuserRoutes.GET("/register", superuserHandler.RegisterRender)
+		superuserRoutes.GET("/login", superuserHandler.LoginRender)
+		superuserRoutes.POST("/register", superuserHandler.RegisterSuperuserHandler)
+		superuserRoutes.POST("/login", superuserHandler.LoginSuperuserHandler)
 
 		// Apply JWTAuthMiddleware to protect routes
 		protectedRoutes := superuserRoutes.Group("/")
 		protectedRoutes.Use(middlewares.JWTAuthMiddleware(tokenManager))
 		{
+			protectedRoutes.GET("/dashboard", superuserHandler.DashboardSuperuserHandler)
+			protectedRoutes.GET("/logout", superuserHandler.LogoutSuperuserHandler)
 			protectedRoutes.GET("/test", superuserHandler.TestTemplate)
-			protectedRoutes.GET("/dashboard", superuserHandler.Dashboard)
-			protectedRoutes.GET("/logout", superuserHandler.LogoutSuperuser)
 		}
 	}
 }

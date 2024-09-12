@@ -23,19 +23,19 @@ func NewSuperuserHandler(service services.SuperuserService, tokenManager tokens.
 	}
 }
 
-func (h *SuperuserHandler) Index(c *gin.Context) {
+func (h *SuperuserHandler) IndexRender(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{"title": "Index"})
 }
 
-func (h *SuperuserHandler) Register(c *gin.Context) {
+func (h *SuperuserHandler) RegisterRender(c *gin.Context) {
 	c.HTML(http.StatusOK, "register.html", gin.H{"title": "Register"})
 }
 
-func (h *SuperuserHandler) Login(c *gin.Context) {
+func (h *SuperuserHandler) LoginRender(c *gin.Context) {
 	c.HTML(http.StatusOK, "login.html", gin.H{"title": "Login"})
 }
 
-func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
+func (h *SuperuserHandler) RegisterSuperuserHandler(c *gin.Context) {
 	strategy := responses.GetResponseStrategy(c)
 
 	var request struct {
@@ -63,7 +63,7 @@ func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
 }
 
 // LoginSuperuser handles the login process for superusers.
-func (h *SuperuserHandler) LoginSuperuser(c *gin.Context) {
+func (h *SuperuserHandler) LoginSuperuserHandler(c *gin.Context) {
 	strategy := responses.GetResponseStrategy(c)
 
 	var request struct {
@@ -103,7 +103,7 @@ func (h *SuperuserHandler) LoginSuperuser(c *gin.Context) {
 }
 
 // Logout handler
-func (h *SuperuserHandler) LogoutSuperuser(c *gin.Context) {
+func (h *SuperuserHandler) LogoutSuperuserHandler(c *gin.Context) {
 	// Clear the JWT cookie
 	c.SetCookie("SuperUserAuthorization", "", -1, "/", "", false, true)
 
@@ -112,15 +112,8 @@ func (h *SuperuserHandler) LogoutSuperuser(c *gin.Context) {
 	strategy.Respond(c, map[string]interface{}{"template": "logout_success.html", "message": "Logout successful"}, http.StatusOK)
 }
 
-func (h *SuperuserHandler) TestTemplate(c *gin.Context) {
-	strategy := responses.GetResponseStrategy(c)
-
-	strategy.Respond(c, map[string]interface{}{"template": "test.html"}, http.StatusOK)
-
-}
-
 // Dashboard renders the dashboard page using HTMX
-func (h *SuperuserHandler) Dashboard(c *gin.Context) {
+func (h *SuperuserHandler) DashboardSuperuserHandler(c *gin.Context) {
 	strategy := responses.GetResponseStrategy(c)
 
 	// Pass user details or other required data to the dashboard
@@ -131,4 +124,11 @@ func (h *SuperuserHandler) Dashboard(c *gin.Context) {
 		"title":    "Dashboard",
 		"user_id":  userID,
 	}, http.StatusOK)
+}
+
+func (h *SuperuserHandler) TestTemplate(c *gin.Context) {
+	strategy := responses.GetResponseStrategy(c)
+
+	strategy.Respond(c, map[string]interface{}{"template": "test.html"}, http.StatusOK)
+
 }
