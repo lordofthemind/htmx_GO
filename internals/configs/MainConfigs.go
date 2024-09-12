@@ -11,6 +11,7 @@ import (
 var (
 	Port                int
 	UseTLS              bool
+	UseCORS             bool
 	AllowedCredentials  bool
 	TokenType           string
 	StaticPath          string
@@ -43,6 +44,7 @@ func InitializeServerConfig(configFile string) error {
 	TemplatePath = viper.GetString("application.template_path")
 	StaticPath = viper.GetString("application.static_path")
 	UseTLS = viper.GetBool("tls.use_tls")
+	UseCORS = viper.GetBool("server.use_cors")
 	TokenSymmetricKey = viper.GetString("token.symmetric_key")
 	TokenType = viper.GetString("token.type")
 
@@ -64,12 +66,12 @@ func InitializeServerConfig(configFile string) error {
 
 // loadEnvironmentConfig loads the server configuration for the given environment.
 func loadEnvironmentConfig(env string) {
-	TlsKeyFile = viper.GetString(env + ".key_file")
-	TlsCertFile = viper.GetString(env + ".cert_file")
-	MongoDBUrl = viper.GetString(env + ".mongoDB_url")
-	AllowedOrigins = viper.GetStringSlice(env + ".cors.allowed_origins")
-	AllowedMethods = viper.GetStringSlice(env + ".cors.allowed_methods")
-	AllowedHeaders = viper.GetStringSlice(env + ".cors.allowed_headers")
-	ExposedHeaders = viper.GetStringSlice(env + ".cors.exposed_headers")
-	AllowedCredentials = viper.GetBool(env + ".cors.allow_credentials")
+	TlsKeyFile = viper.GetString(fmt.Sprintf("%s.key_file", env))
+	TlsCertFile = viper.GetString(fmt.Sprintf("%s.cert_file", env))
+	MongoDBUrl = viper.GetString(fmt.Sprintf("%s.mongoDB_url", env))
+	AllowedOrigins = viper.GetStringSlice(fmt.Sprintf("%s.cors.allowed_origins", env))
+	AllowedMethods = viper.GetStringSlice(fmt.Sprintf("%s.cors.allowed_methods", env))
+	AllowedHeaders = viper.GetStringSlice(fmt.Sprintf("%s.cors.allowed_headers", env))
+	ExposedHeaders = viper.GetStringSlice(fmt.Sprintf("%s.cors.exposed_headers", env))
+	AllowedCredentials = viper.GetBool(fmt.Sprintf("%s.cors.allow_credentials", env))
 }

@@ -11,6 +11,7 @@ application:
 # Server Configuration
 server:
   port: 9090
+  use_cors: false  # Set this to `true` to enable CORS, `false` to disable
 
 # Development Environment Variables
 development:

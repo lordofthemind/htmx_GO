@@ -16,9 +16,16 @@ import (
 	"github.com/lordofthemind/htmx_GO/pkgs"
 )
 
-// SetUpGinServerWithCORS sets up a Gin server with CORS middleware configured according to the application settings.
-// Returns the configured Gin server and an error if any issues occur during setup.
-func SetUpGinServerWithCORS() (*gin.Engine, error) {
+// ServerSetup defines the interface for setting up a Gin server
+type ServerSetup interface {
+	SetUpServer() (*gin.Engine, error)
+}
+
+// CorsServerSetup is the struct for setting up the server with CORS
+type CorsServerSetup struct{}
+
+// SetUpServer sets up a Gin server with CORS middleware
+func (c *CorsServerSetup) SetUpServer() (*gin.Engine, error) {
 	router := gin.Default()
 
 	// Serve static files using the path from the config
@@ -46,9 +53,11 @@ func SetUpGinServerWithCORS() (*gin.Engine, error) {
 	return router, nil
 }
 
-// SetUpGinServer sets up a basic Gin server without any CORS configuration.
-// Returns the configured Gin server and an error if any issues occur during setup.
-func SetUpGinServer() (*gin.Engine, error) {
+// BasicServerSetup is the struct for setting up the server without CORS
+type BasicServerSetup struct{}
+
+// SetUpServer sets up a basic Gin server without CORS
+func (b *BasicServerSetup) SetUpServer() (*gin.Engine, error) {
 	router := gin.Default()
 
 	// Serve static files using the path from the config
@@ -56,7 +65,25 @@ func SetUpGinServer() (*gin.Engine, error) {
 
 	// Load HTML templates using the path from the config
 	router.LoadHTMLGlob(configs.TemplatePath)
+
 	return router, nil
+}
+
+// SetUpServerWithOptionalCORS sets up the Gin router with or without CORS based on the UseCORS flag.
+func SetUpServerWithOptionalCORS() (*gin.Engine, error) {
+	var serverSetup ServerSetup
+
+	// Choose the server setup based on UseCORS config
+	if configs.UseCORS {
+		fmt.Println("Setting up server with CORS...")
+		serverSetup = &CorsServerSetup{}
+	} else {
+		fmt.Println("Setting up server without CORS...")
+		serverSetup = &BasicServerSetup{}
+	}
+
+	// Set up the Gin router
+	return serverSetup.SetUpServer()
 }
 
 // StartGinServer starts the provided Gin server with or without TLS based on application settings.

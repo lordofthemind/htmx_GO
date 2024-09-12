@@ -32,7 +32,13 @@ func RunServer() {
 		log.Fatalf("Failed to initialize server configuration: %v", err)
 	}
 
-	// Connect to MongoDB
+	// Set up the Gin router with optional CORS
+	router, err := initializers.SetUpServerWithOptionalCORS()
+	if err != nil {
+		log.Fatalf("Failed to set up Gin server: %v", err)
+	}
+
+	// MongoDB connection and setup
 	ctx := context.Background()
 	dsn := configs.MongoDBUrl
 	timeout := 30 * time.Second
@@ -43,17 +49,11 @@ func RunServer() {
 	if err != nil {
 		log.Fatalf("Error connecting to MongoDB: %v", err)
 	}
-	defer mongoCL.Disconnect(ctx) // Ensure MongoDB client is disconnected on shutdown
+	defer mongoCL.Disconnect(ctx)
 
-	// Get the database instance
-	dbName := "htmx_go" // Replace with your actual database name
+	// Get the MongoDB database instance
+	dbName := "htmx_go"
 	mongoDB := initializers.GetDatabase(mongoCL, dbName)
-	// Set up the Gin router with CORS
-	router, err := initializers.SetUpGinServerWithCORS()
-	// For without CORS use: router, err := initializers.SetUpGinServer()
-	if err != nil {
-		log.Fatalf("Failed to set up Gin server: %v", err)
-	}
 
 	// Create an HTTP server with the Gin router
 	server := &http.Server{
@@ -61,22 +61,20 @@ func RunServer() {
 		Handler: router,
 	}
 
+	// Set up service, handler, and middleware
+	repo := repositories.NewSuperuserRepository(mongoDB)
+	service := services.NewSuperuserService(repo)
+	handler := handlers.NewSuperuserHandler(service)
+
+	// Middleware and route registration
+	router.Use(middlewares.ResponseStrategyMiddleware())
+	routes.RegisterSuperuserRoutes(router, handler)
+
 	// Start the Gin server
 	err = initializers.StartGinServer(router)
 	if err != nil {
 		log.Fatalf("Failed to start Gin server: %v", err)
 	}
-
-	// In runServer.go
-	repo := repositories.NewSuperuserRepository(mongoDB)
-	service := services.NewSuperuserService(repo)
-	handler := handlers.NewSuperuserHandler(service)
-
-	// In your `RunServer()` function
-	router.Use(middlewares.ResponseStrategyMiddleware())
-
-	// Register routes
-	routes.RegisterSuperuserRoutes(router, handler)
 
 	// Handle graceful shutdown
 	initializers.GracefulShutdown(server)
