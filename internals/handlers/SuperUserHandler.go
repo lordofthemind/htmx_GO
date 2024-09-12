@@ -18,15 +18,15 @@ func NewSuperuserHandler(service services.SuperuserService) *SuperuserHandler {
 }
 
 func (h *SuperuserHandler) Index(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", nil)
+	c.HTML(http.StatusOK, "index.html", gin.H{"title": "Index"})
 }
 
 func (h *SuperuserHandler) Register(c *gin.Context) {
-	c.HTML(http.StatusOK, "register.html", nil)
+	c.HTML(http.StatusOK, "register.html", gin.H{"title": "Register"})
 }
 
 func (h *SuperuserHandler) Login(c *gin.Context) {
-	c.HTML(http.StatusOK, "login.html", nil)
+	c.HTML(http.StatusOK, "login.html", gin.H{"title": "Login"})
 }
 
 func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
