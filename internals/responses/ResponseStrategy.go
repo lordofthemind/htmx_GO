@@ -1,6 +1,7 @@
 package responses
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -26,17 +27,31 @@ type HTMLResponseStrategy struct {
 
 // Respond sends an HTML response using a specified template.
 func (r *HTMLResponseStrategy) Respond(c *gin.Context, data interface{}, status int) {
-	// If the data includes a "template" field, use it as the template name
+	// Log the data for debugging
+	fmt.Printf("Data passed to Respond: %+v\n", data)
+
+	// Ensure data is of type map[string]interface{}
 	if dataMap, ok := data.(map[string]interface{}); ok {
+		// Check for the template key
 		if templateName, exists := dataMap["template"]; exists {
+			// Ensure the template is a string
 			if templateNameStr, isString := templateName.(string); isString {
+				fmt.Printf("Using template: %s\n", templateNameStr) // Log the template being used
+				// Remove the "template" key from the map before passing to the HTML method
+				delete(dataMap, "template")
 				c.HTML(status, templateNameStr, dataMap)
 				return
+			} else {
+				fmt.Println("Error: template is not a string")
 			}
+		} else {
+			fmt.Println("Error: template key not found")
 		}
+	} else {
+		fmt.Println("Error: data is not a map[string]interface{}")
 	}
 
-	// Fall back to the default template if no "template" is provided
+	// Fall back to default template if no valid template is found
 	c.HTML(status, r.Template, data)
 }
 

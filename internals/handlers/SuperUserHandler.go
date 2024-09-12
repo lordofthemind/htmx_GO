@@ -30,62 +30,60 @@ func (h *SuperuserHandler) Login(c *gin.Context) {
 }
 
 func (h *SuperuserHandler) RegisterSuperuser(c *gin.Context) {
-	// Retrieve the response strategy from the context
 	strategy := responses.GetResponseStrategy(c)
 
 	var request struct {
-		Username string `json:"username" binding:"required"`
-		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required,min=6"`
+		Username string `form:"username" binding:"required"`
+		Email    string `form:"email" binding:"required,email"`
+		Password string `form:"password" binding:"required,min=6"`
 	}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
+	if err := c.ShouldBind(&request); err != nil {
 		errorMessage := "Invalid input data"
 		if validationErr, ok := err.(validator.ValidationErrors); ok {
 			errorMessage = validationErr.Error()
 		}
-		// Render an error template if needed
 		strategy.Respond(c, gin.H{"template": "register_error.html", "error": errorMessage}, http.StatusBadRequest)
 		return
 	}
 
 	err := h.service.RegisterSuperuser(c.Request.Context(), request.Username, request.Email, request.Password)
 	if err != nil {
-		// Render an error template if registration fails
 		strategy.Respond(c, gin.H{"template": "register_error.html", "error": err.Error()}, http.StatusBadRequest)
 		return
 	}
 
-	// Success response with dynamic template
 	strategy.Respond(c, gin.H{"template": "register_success.html", "message": "Superuser registered successfully"}, http.StatusOK)
 }
 
 func (h *SuperuserHandler) LoginSuperuser(c *gin.Context) {
-	// Retrieve the response strategy from the context
 	strategy := responses.GetResponseStrategy(c)
 
 	var request struct {
-		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required"`
+		Email    string `form:"email" binding:"required,email"`
+		Password string `form:"password" binding:"required"`
 	}
-	if err := c.ShouldBindJSON(&request); err != nil {
+
+	if err := c.ShouldBind(&request); err != nil {
 		errorMessage := "Invalid input data"
 		if validationErr, ok := err.(validator.ValidationErrors); ok {
 			errorMessage = validationErr.Error()
 		}
-		// Pass error template
 		strategy.Respond(c, gin.H{"template": "login_error.html", "error": errorMessage}, http.StatusBadRequest)
 		return
 	}
 
-	// Authenticate superuser
 	superuser, err := h.service.AuthenticateSuperuser(c.Request.Context(), request.Email, request.Password)
 	if err != nil {
-		// Pass error template
 		strategy.Respond(c, gin.H{"template": "login_error.html", "error": "Invalid email or password"}, http.StatusUnauthorized)
 		return
 	}
 
-	// Success response with dynamic template
 	strategy.Respond(c, gin.H{"template": "login_response.html", "message": "Login successful", "user": superuser}, http.StatusOK)
+}
+
+func (h *SuperuserHandler) TestTemplate(c *gin.Context) {
+	c.HTML(http.StatusOK, "register_success.html", gin.H{
+		"message": "Test success!",
+	})
 }
