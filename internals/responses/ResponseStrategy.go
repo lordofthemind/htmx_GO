@@ -26,8 +26,10 @@ type HTMLResponseStrategy struct {
 }
 
 func (r *HTMLResponseStrategy) Respond(c *gin.Context, data interface{}, status int) {
+	// Log the data for debugging
 	fmt.Printf("Data passed to Respond: %+v\n", data)
 
+	// Check if data is a map[string]interface{}
 	dataMap, ok := data.(map[string]interface{})
 	if !ok {
 		fmt.Println("Error: data is not a map[string]interface{}")
@@ -35,6 +37,7 @@ func (r *HTMLResponseStrategy) Respond(c *gin.Context, data interface{}, status 
 		return
 	}
 
+	// Check if template key exists and is a string
 	templateName, exists := dataMap["template"]
 	if !exists {
 		fmt.Println("Error: template key not found in data")
@@ -50,42 +53,10 @@ func (r *HTMLResponseStrategy) Respond(c *gin.Context, data interface{}, status 
 	}
 
 	fmt.Printf("Using template: %s\n", templateNameStr)
+	// Remove the "template" key before passing data to c.HTML
 	delete(dataMap, "template")
 	c.HTML(status, templateNameStr, dataMap)
 }
-
-// func (r *HTMLResponseStrategy) Respond(c *gin.Context, data interface{}, status int) {
-// 	// Log the data for debugging
-// 	fmt.Printf("Data passed to Respond: %+v\n", data)
-
-// 	// Check if data is a map[string]interface{}
-// 	dataMap, ok := data.(map[string]interface{})
-// 	if !ok {
-// 		fmt.Println("Error: data is not a map[string]interface{}")
-// 		c.HTML(status, "error.html", gin.H{"error": "Internal Server Error"})
-// 		return
-// 	}
-
-// 	// Check if template key exists and is a string
-// 	templateName, exists := dataMap["template"]
-// 	if !exists {
-// 		fmt.Println("Error: template key not found in data")
-// 		c.HTML(status, "error.html", gin.H{"error": "Template not specified"})
-// 		return
-// 	}
-
-// 	templateNameStr, isString := templateName.(string)
-// 	if !isString {
-// 		fmt.Println("Error: template name is not a string")
-// 		c.HTML(status, "error.html", gin.H{"error": "Invalid template name"})
-// 		return
-// 	}
-
-// 	fmt.Printf("Using template: %s\n", templateNameStr)
-// 	// Remove the "template" key before passing data to c.HTML
-// 	delete(dataMap, "template")
-// 	c.HTML(status, templateNameStr, dataMap)
-// }
 
 // DefaultResponseStrategy is a fallback strategy if none is set in the context.
 type DefaultResponseStrategy struct{}

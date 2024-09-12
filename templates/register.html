@@ -9,7 +9,8 @@
 </head>
 <body>
     <h1>Register</h1>
-    <form hx-post="/superuser/register" hx-target="#registration-response" hx-swap="innerHTML">
+    <form hx-post="/superuser/register" hx-target="#registration-response" hx-swap="innerHTML"
+            hx-headers='{"Accept": "text/html"}'">
         <div>
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
