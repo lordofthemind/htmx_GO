@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+</head>
+<body>
+    <h1>Welcome to the Dashboard, {{ .user_id }}</h1>
+
+    <div id="content">
+        <p>Here's your dashboard content.</p>
+    </div>
+
+    <button hx-get="/superuser/test" hx-target="#content" hx-swap="innerHTML">
+        Load Test Template
+    </button>
+
+    <button hx-get="/superuser/logout" hx-target="body" hx-swap="innerHTML">
+        Logout
+    </button>
+</body>
+</html>

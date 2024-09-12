@@ -14,6 +14,7 @@ import (
 	"github.com/lordofthemind/htmx_GO/internals/repositories"
 	"github.com/lordofthemind/htmx_GO/internals/routes"
 	"github.com/lordofthemind/htmx_GO/internals/services"
+	"github.com/lordofthemind/htmx_GO/internals/tokens"
 )
 
 func RunServer() {
@@ -44,7 +45,7 @@ func RunServer() {
 	timeout := 30 * time.Second
 	maxRetries := 5
 
-	// Connect to mongoDB
+	// Connect to MongoDB
 	mongoCL, err := initializers.ConnectToMongoDB(ctx, dsn, timeout, maxRetries)
 	if err != nil {
 		log.Fatalf("Error connecting to MongoDB: %v", err)
@@ -64,11 +65,12 @@ func RunServer() {
 	// Set up service, handler, and middleware
 	repo := repositories.NewSuperuserRepository(mongoDB)
 	service := services.NewSuperuserService(repo)
-	handler := handlers.NewSuperuserHandler(service)
+	tokenManager := tokens.NewJWTManager()
+	handler := handlers.NewSuperuserHandler(service, tokenManager)
 
 	// Middleware and route registration
 	router.Use(middlewares.ResponseStrategyMiddleware())
-	routes.RegisterSuperuserRoutes(router, handler)
+	routes.RegisterSuperuserRoutes(router, handler, tokenManager)
 
 	// Start the Gin server
 	err = initializers.StartGinServer(router)
