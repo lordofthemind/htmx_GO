@@ -7,6 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/google/uuid v1.4.0
 	go.mongodb.org/mongo-driver v1.16.1
 )
 

@@ -5,21 +5,21 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lordofthemind/htmx_GO/internals/types"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type SuperuserRepository interface {
 	CreateSuperuser(ctx context.Context, superuser *types.Superuser) error
 	FindSuperuserByEmail(ctx context.Context, email string) (*types.Superuser, error)
-	FindSuperuserByID(ctx context.Context, id primitive.ObjectID) (*types.Superuser, error)
+	FindSuperuserByID(ctx context.Context, id uuid.UUID) (*types.Superuser, error)
 	UpdateSuperuser(ctx context.Context, superuser *types.Superuser) error
 	FindSuperuserByUsername(ctx context.Context, username string) (*types.Superuser, error)
 	FindSuperuserByResetToken(ctx context.Context, token string) (*types.Superuser, error)
 	GetRoles(ctx context.Context) ([]string, error)
-	FindActivityLogsByUserID(ctx context.Context, userID string) ([]types.UserActivityLog, error)
+	FindActivityLogsByUserID(ctx context.Context, userID uuid.UUID) ([]types.UserActivityLog, error)
 }
 
 type superuserRepo struct {
@@ -35,6 +35,9 @@ func NewSuperuserRepository(db *mongo.Database) SuperuserRepository {
 func (r *superuserRepo) CreateSuperuser(ctx context.Context, superuser *types.Superuser) error {
 	superuser.CreatedAt = time.Now().Unix()
 	superuser.UpdatedAt = time.Now().Unix()
+	if superuser.ID == uuid.Nil {
+		superuser.ID = uuid.New() // Generate a new UUID if not provided
+	}
 	_, err := r.db.InsertOne(ctx, superuser)
 	return err
 }
@@ -48,7 +51,7 @@ func (r *superuserRepo) FindSuperuserByEmail(ctx context.Context, email string) 
 	return &superuser, err
 }
 
-func (r *superuserRepo) FindSuperuserByID(ctx context.Context, id primitive.ObjectID) (*types.Superuser, error) {
+func (r *superuserRepo) FindSuperuserByID(ctx context.Context, id uuid.UUID) (*types.Superuser, error) {
 	var superuser types.Superuser
 	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&superuser)
 	if err == mongo.ErrNoDocuments {
@@ -90,8 +93,6 @@ func (r *superuserRepo) FindSuperuserByResetToken(ctx context.Context, token str
 }
 
 func (r *superuserRepo) GetRoles(ctx context.Context) ([]string, error) {
-	// Assume roles are stored in a separate collection or in a predefined list
-	// Example: Fetch roles from a roles collection
 	var roles []string
 	cursor, err := r.db.Database().Collection("roles").Find(ctx, bson.M{})
 	if err != nil {
@@ -111,7 +112,7 @@ func (r *superuserRepo) GetRoles(ctx context.Context) ([]string, error) {
 	return roles, nil
 }
 
-func (r *superuserRepo) FindActivityLogsByUserID(ctx context.Context, userID string) ([]types.UserActivityLog, error) {
+func (r *superuserRepo) FindActivityLogsByUserID(ctx context.Context, userID uuid.UUID) ([]types.UserActivityLog, error) {
 	var logs []types.UserActivityLog
 	cursor, err := r.db.Database().Collection("activity_logs").Find(ctx, bson.M{"user_id": userID})
 	if err != nil {

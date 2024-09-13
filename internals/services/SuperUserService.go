@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lordofthemind/htmx_GO/internals/repositories"
 	"github.com/lordofthemind/htmx_GO/internals/types"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,12 +16,12 @@ import (
 type SuperuserService interface {
 	RegisterSuperuser(ctx context.Context, username, email, password string) error
 	AuthenticateSuperuser(ctx context.Context, email, password string) (*types.Superuser, error)
-	UpdateProfile(ctx context.Context, username, password string) error
+	UpdateProfile(ctx context.Context, userID uuid.UUID, username, password string) error
 	SendPasswordResetEmail(ctx context.Context, email string) error
 	ResetPassword(ctx context.Context, token, password string) error
-	Verify2FA(ctx context.Context, userID, code string) error
+	Verify2FA(ctx context.Context, userID uuid.UUID, code string) error
 	ListRoles(ctx context.Context) ([]string, error)
-	GetUserActivityLogs(ctx context.Context, userID string) ([]types.UserActivityLog, error)
+	GetUserActivityLogs(ctx context.Context, userID uuid.UUID) ([]types.UserActivityLog, error)
 	GetFilePath(fileID string) (string, error)
 }
 
@@ -48,9 +48,12 @@ func (s *superuserService) RegisterSuperuser(ctx context.Context, username, emai
 
 	// Create superuser
 	superuser := &types.Superuser{
-		Username: username,
-		Email:    email,
-		Password: string(hashedPassword),
+		ID:        uuid.New(), // Generate a new UUID
+		Username:  username,
+		Email:     email,
+		Password:  string(hashedPassword),
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
 	}
 
 	return s.repo.CreateSuperuser(ctx, superuser)
@@ -72,11 +75,15 @@ func (s *superuserService) AuthenticateSuperuser(ctx context.Context, email, pas
 	return superuser, nil
 }
 
-// 1. Update user profile.
-func (s *superuserService) UpdateProfile(ctx context.Context, username, password string) error {
-	superuser, err := s.repo.FindSuperuserByUsername(ctx, username)
+// Update user profile.
+func (s *superuserService) UpdateProfile(ctx context.Context, userID uuid.UUID, username, password string) error {
+	superuser, err := s.repo.FindSuperuserByID(ctx, userID)
 	if err != nil {
 		return err
+	}
+
+	if username != "" {
+		superuser.Username = username
 	}
 
 	if password != "" {
@@ -91,7 +98,7 @@ func (s *superuserService) UpdateProfile(ctx context.Context, username, password
 	return s.repo.UpdateSuperuser(ctx, superuser)
 }
 
-// 2. Send password reset email (just a placeholder for now).
+// Send password reset email (just a placeholder for now).
 func (s *superuserService) SendPasswordResetEmail(ctx context.Context, email string) error {
 	superuser, err := s.repo.FindSuperuserByEmail(ctx, email)
 	if err != nil {
@@ -104,7 +111,7 @@ func (s *superuserService) SendPasswordResetEmail(ctx context.Context, email str
 	return nil
 }
 
-// 3. Reset user password.
+// Reset user password.
 func (s *superuserService) ResetPassword(ctx context.Context, token, password string) error {
 	// Token validation logic should go here (this is a placeholder)
 	if token != "valid-token" {
@@ -127,15 +134,9 @@ func (s *superuserService) ResetPassword(ctx context.Context, token, password st
 	return s.repo.UpdateSuperuser(ctx, superuser)
 }
 
-// 4. Verify 2FA code.
-func (s *superuserService) Verify2FA(ctx context.Context, userID string, code string) error {
-	// Convert userID from string to primitive.ObjectID
-	objectID, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return errors.New("invalid user ID format")
-	}
-
-	superuser, err := s.repo.FindSuperuserByID(ctx, objectID)
+// Verify 2FA code.
+func (s *superuserService) Verify2FA(ctx context.Context, userID uuid.UUID, code string) error {
+	superuser, err := s.repo.FindSuperuserByID(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -150,7 +151,7 @@ func (s *superuserService) Verify2FA(ctx context.Context, userID string, code st
 	return s.repo.UpdateSuperuser(ctx, superuser)
 }
 
-// 5. List user roles (for role-based access control).
+// List user roles (for role-based access control).
 func (s *superuserService) ListRoles(ctx context.Context) ([]string, error) {
 	roles, err := s.repo.GetRoles(ctx)
 	if err != nil {
@@ -159,8 +160,8 @@ func (s *superuserService) ListRoles(ctx context.Context) ([]string, error) {
 	return roles, nil
 }
 
-// 6. Get user activity logs.
-func (s *superuserService) GetUserActivityLogs(ctx context.Context, userID string) ([]types.UserActivityLog, error) {
+// Get user activity logs.
+func (s *superuserService) GetUserActivityLogs(ctx context.Context, userID uuid.UUID) ([]types.UserActivityLog, error) {
 	logs, err := s.repo.FindActivityLogsByUserID(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -168,7 +169,7 @@ func (s *superuserService) GetUserActivityLogs(ctx context.Context, userID strin
 	return logs, nil
 }
 
-// 7. Get file path by file ID.
+// Get file path by file ID.
 func (s *superuserService) GetFilePath(fileID string) (string, error) {
 	// This is a placeholder. Normally, you'd look up the file in the database.
 	filePath := fmt.Sprintf("./uploads/%s", fileID)
