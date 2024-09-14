@@ -3,8 +3,8 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/lordofthemind/htmx_GO/internals/handlers"
-	"github.com/lordofthemind/htmx_GO/internals/middlewares"
-	"github.com/lordofthemind/htmx_GO/internals/tokens"
+	"github.com/lordofthemind/htmx_GO/pkgs/middlewares"
+	"github.com/lordofthemind/htmx_GO/pkgs/tokens"
 )
 
 func RegisterSuperuserRoutes(router *gin.Engine, superuserHandler *handlers.SuperuserHandler, tokenManager tokens.TokenManager) {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lordofthemind/htmx_GO/internals/tokens"
+	"github.com/lordofthemind/htmx_GO/pkgs/tokens"
 )
 
 // JWTAuthMiddleware validates JWT tokens using the provided TokenManager.

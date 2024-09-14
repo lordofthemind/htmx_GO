@@ -9,7 +9,7 @@ import (
 	"github.com/lordofthemind/htmx_GO/internals/configs"
 	"github.com/lordofthemind/htmx_GO/internals/responses"
 	"github.com/lordofthemind/htmx_GO/internals/services"
-	"github.com/lordofthemind/htmx_GO/internals/tokens"
+	"github.com/lordofthemind/htmx_GO/pkgs/tokens"
 )
 
 type SuperuserHandler struct {

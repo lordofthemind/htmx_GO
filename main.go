@@ -1,7 +1,7 @@
 package main
 
-import "github.com/lordofthemind/htmx_GO/cmd"
+import "github.com/lordofthemind/htmx_GO/cmd/server"
 
 func main() {
-	cmd.RunServer()
+	server.RunServer()
 }

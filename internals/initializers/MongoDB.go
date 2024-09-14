@@ -50,3 +50,8 @@ func ConnectToMongoDB(ctx context.Context, dsn string, timeout time.Duration, ma
 	// Return error if all retries fail
 	return nil, fmt.Errorf("failed to connect to MongoDB after %d retries: %w", maxRetries, err)
 }
+
+// GetDatabase returns the MongoDB database instance for the given database name.
+func GetDatabase(client *mongo.Client, dbName string) *mongo.Database {
+	return client.Database(dbName)
+}

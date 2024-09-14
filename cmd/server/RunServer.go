@@ -1,4 +1,4 @@
-package cmd
+package server
 
 import (
 	"context"
@@ -10,11 +10,11 @@ import (
 	"github.com/lordofthemind/htmx_GO/internals/configs"
 	"github.com/lordofthemind/htmx_GO/internals/handlers"
 	"github.com/lordofthemind/htmx_GO/internals/initializers"
-	"github.com/lordofthemind/htmx_GO/internals/middlewares"
 	"github.com/lordofthemind/htmx_GO/internals/repositories"
 	"github.com/lordofthemind/htmx_GO/internals/routes"
 	"github.com/lordofthemind/htmx_GO/internals/services"
-	"github.com/lordofthemind/htmx_GO/internals/tokens"
+	"github.com/lordofthemind/htmx_GO/pkgs/middlewares"
+	"github.com/lordofthemind/htmx_GO/pkgs/tokens"
 )
 
 func RunServer() {

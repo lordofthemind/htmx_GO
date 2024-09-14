@@ -1,4 +1,4 @@
-package pkgs
+package helpers
 
 import (
 	"crypto/tls"

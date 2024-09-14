@@ -3,8 +3,10 @@
 ├── Future.md
 ├── Makefile
 ├── Readme.md
+├── Routes.txt
 ├── cmd
-│   └── RunServer.go
+│   └── server
+│       └── RunServer.go
 ├── config.yaml
 ├── docker
 ├── docs
@@ -17,15 +19,9 @@
 │   ├── handlers
 │   │   └── SuperUserHandler.go
 │   ├── initializers
-│   │   ├── ConnMongoDB.go
-│   │   ├── GetMongoDB.go
 │   │   ├── GinServer.go
-│   │   └── LoggerFile.go
-│   ├── middlewares
-│   │   ├── JWTMiddleware.go
-│   │   ├── LoggingMiddleware.go
-│   │   ├── RequestIDMiddlware.go
-│   │   └── ResponseStrategyMiddleware.go
+│   │   ├── LoggerFile.go
+│   │   └── MongoDB.go
 │   ├── repositories
 │   │   └── SuperUserRepository.go
 │   ├── responses
@@ -36,18 +32,21 @@
 │   │   └── SuperUserRoutes.go
 │   ├── services
 │   │   └── SuperUserService.go
-│   ├── tokens
-│   │   └── JwtToken.go
 │   ├── types
 │   │   ├── SuperUserType.go
 │   │   └── UserActivityLogType.go
 │   └── utils
-├── logs
-│   ├── 20240914_025534_Server.log
-│   └── 20240914_034152_Server.log
 ├── main.go
 ├── pkgs
-│   └── LoadTLSCertificates.go
+│   ├── helpers
+│   │   └── LoadTLSCertificates.go
+│   ├── middlewares
+│   │   ├── JWTMiddleware.go
+│   │   ├── LoggingMiddleware.go
+│   │   ├── RequestIDMiddlware.go
+│   │   └── ResponseStrategyMiddleware.go
+│   └── tokens
+│       └── JwtToken.go
 ├── scripts
 │   ├── loginHtml.sh
 │   ├── loginJson.sh
@@ -76,4 +75,4 @@
 │   └── main
 └── tree.txt
 
-23 directories, 54 files
+24 directories, 52 files

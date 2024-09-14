@@ -13,7 +13,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/lordofthemind/htmx_GO/internals/configs"
-	"github.com/lordofthemind/htmx_GO/pkgs"
+	"github.com/lordofthemind/htmx_GO/pkgs/helpers"
 )
 
 // ServerSetup defines the interface for setting up a Gin server
@@ -98,7 +98,7 @@ func StartGinServer(router *gin.Engine) error {
 	// Check if TLS is enabled and configure the server accordingly
 	if configs.UseTLS {
 		// Load the TLS certificate and key
-		cert, err := pkgs.LoadTLSCertificate(configs.TlsCertFile, configs.TlsKeyFile)
+		cert, err := helpers.LoadTLSCertificate(configs.TlsCertFile, configs.TlsKeyFile)
 		if err != nil {
 			return fmt.Errorf("failed to load TLS certificate: %w", err)
 		}
