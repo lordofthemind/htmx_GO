@@ -65,7 +65,9 @@ func RunServer() {
 	// Set up service, handler, and middleware
 	repo := repositories.NewSuperuserRepository(mongoDB)
 	service := services.NewSuperuserService(repo)
-	tokenManager := tokens.NewJWTManager()
+
+	// Use the new NewTokenManager function
+	tokenManager := tokens.NewTokenManager()
 	handler := handlers.NewSuperuserHandler(service, tokenManager)
 
 	// Middleware and route registration

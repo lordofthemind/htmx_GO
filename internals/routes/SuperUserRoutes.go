@@ -20,7 +20,7 @@ func RegisterSuperuserRoutes(router *gin.Engine, superuserHandler *handlers.Supe
 
 		// Apply JWTAuthMiddleware to protect routes
 		protectedRoutes := superuserRoutes.Group("/")
-		protectedRoutes.Use(middlewares.JWTAuthMiddleware(tokenManager))
+		protectedRoutes.Use(middlewares.AuthTokenMiddleware(tokenManager))
 		{
 			// Protected routes
 			protectedRoutes.GET("/dashboard", superuserHandler.DashboardSuperuserHandler)

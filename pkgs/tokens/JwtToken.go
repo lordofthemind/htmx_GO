@@ -8,13 +8,7 @@ import (
 	"github.com/lordofthemind/htmx_GO/internals/configs"
 )
 
-// TokenManager defines the interface for generating and validating JWT tokens.
-type TokenManager interface {
-	GenerateJWT(userID string) (string, error)
-	ValidateJWT(tokenString string) (jwt.MapClaims, error)
-}
-
-// JWTManager is the implementation of the TokenManager interface.
+// JWTManager implements the TokenManager interface for JWT tokens.
 type JWTManager struct{}
 
 // NewJWTManager returns a new instance of JWTManager.
@@ -22,8 +16,8 @@ func NewJWTManager() *JWTManager {
 	return &JWTManager{}
 }
 
-// GenerateJWT generates a JWT token for the given user ID.
-func (j *JWTManager) GenerateJWT(userID string) (string, error) {
+// GenerateToken generates a JWT token for the given user ID.
+func (j *JWTManager) GenerateToken(userID string) (string, error) {
 	// Define the token claims
 	claims := jwt.MapClaims{
 		"user_id":   userID,
@@ -42,8 +36,8 @@ func (j *JWTManager) GenerateJWT(userID string) (string, error) {
 	return tokenString, nil
 }
 
-// ValidateJWT validates a JWT token and returns the claims if valid.
-func (j *JWTManager) ValidateJWT(tokenString string) (jwt.MapClaims, error) {
+// ValidateToken validates a JWT token and returns the claims if valid.
+func (j *JWTManager) ValidateToken(tokenString string) (map[string]interface{}, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
@@ -55,6 +49,7 @@ func (j *JWTManager) ValidateJWT(tokenString string) (jwt.MapClaims, error) {
 		return nil, err
 	}
 
+	// Check if the token is valid and return the claims
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return claims, nil
 	} else {

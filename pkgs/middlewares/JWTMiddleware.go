@@ -7,10 +7,8 @@ import (
 	"github.com/lordofthemind/htmx_GO/pkgs/tokens"
 )
 
-// JWTAuthMiddleware validates JWT tokens using the provided TokenManager.
-func JWTAuthMiddleware(tokenManager tokens.TokenManager) gin.HandlerFunc {
+func AuthTokenMiddleware(tokenManager tokens.TokenManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get the JWT token from cookies
 		token, err := c.Cookie("SuperUserAuthorization")
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
@@ -18,15 +16,13 @@ func JWTAuthMiddleware(tokenManager tokens.TokenManager) gin.HandlerFunc {
 			return
 		}
 
-		// Validate the token using the TokenManager
-		claims, err := tokenManager.ValidateJWT(token)
+		claims, err := tokenManager.ValidateToken(token)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
 
-		// Set user ID in context
 		c.Set("userID", claims["user_id"])
 		c.Next()
 	}

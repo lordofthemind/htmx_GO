@@ -65,4 +65,4 @@ staging:
 token:
   symmetric_key: qwertyuiopasdfghjklzxcvbnmqwerty
   access_duration: 15m
-  type: "jwt"  # Change to "paseto" to use Paseto tokens
+  use_jwt: false
