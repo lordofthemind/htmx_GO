@@ -17,7 +17,7 @@ type JSONResponseStrategy struct{}
 
 // Respond formats and sends a JSON response
 func (r *JSONResponseStrategy) Respond(c *gin.Context, data interface{}, status int) {
-	standardResponse := NewResponse(status, "Request processed", data, nil)
+	standardResponse := NewResponse(c, status, "Request processed", data, nil)
 	c.JSON(status, standardResponse)
 }
 

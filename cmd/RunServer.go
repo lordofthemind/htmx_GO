@@ -21,7 +21,7 @@ func RunServer() {
 	log.Println("Starting server...")
 
 	// Set up logging
-	logFile, err := initializers.SetUpLoggerFile("ServerLogs.log")
+	logFile, err := initializers.SetUpLoggerFile("Server.log")
 	if err != nil {
 		log.Fatalf("Failed to set up logger: %v", err)
 	}
@@ -69,6 +69,8 @@ func RunServer() {
 	handler := handlers.NewSuperuserHandler(service, tokenManager)
 
 	// Middleware and route registration
+	router.Use(middlewares.LoggingMiddleware())
+	router.Use(middlewares.RequestIDMiddleware())
 	router.Use(middlewares.ResponseStrategyMiddleware())
 	routes.RegisterSuperuserRoutes(router, handler, tokenManager)
 

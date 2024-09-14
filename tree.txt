@@ -23,11 +23,15 @@
 │   │   └── LoggerFile.go
 │   ├── middlewares
 │   │   ├── JWTMiddleware.go
+│   │   ├── LoggingMiddleware.go
+│   │   ├── RequestIDMiddlware.go
 │   │   └── ResponseStrategyMiddleware.go
 │   ├── repositories
 │   │   └── SuperUserRepository.go
 │   ├── responses
-│   │   └── ResponseStrategy.go
+│   │   ├── ResponseStrategy.go
+│   │   ├── StandardResponse.go
+│   │   └── SuperUserReqResp.go
 │   ├── routes
 │   │   └── SuperUserRoutes.go
 │   ├── services
@@ -35,10 +39,12 @@
 │   ├── tokens
 │   │   └── JwtToken.go
 │   ├── types
-│   │   └── SuperUserType.go
+│   │   ├── SuperUserType.go
+│   │   └── UserActivityLogType.go
 │   └── utils
 ├── logs
-│   └── 20240912_184123_ServerLogs.log
+│   ├── 20240914_025534_Server.log
+│   └── 20240914_034152_Server.log
 ├── main.go
 ├── pkgs
 │   └── LoadTLSCertificates.go
@@ -59,6 +65,8 @@
 │   ├── login_error.html
 │   ├── login_form.html
 │   ├── login_success.html
+│   ├── profile.html
+│   ├── profile_edit.html
 │   ├── register.html
 │   ├── register_error.html
 │   ├── register_success.html
@@ -68,4 +76,4 @@
 │   └── main
 └── tree.txt
 
-23 directories, 46 files
+23 directories, 54 files
