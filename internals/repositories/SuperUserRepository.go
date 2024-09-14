@@ -9,17 +9,26 @@ import (
 	"github.com/lordofthemind/htmx_GO/internals/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type SuperuserRepository interface {
-	CreateSuperuser(ctx context.Context, superuser *types.Superuser) error
-	FindSuperuserByEmail(ctx context.Context, email string) (*types.Superuser, error)
-	FindSuperuserByID(ctx context.Context, id uuid.UUID) (*types.Superuser, error)
-	UpdateSuperuser(ctx context.Context, superuser *types.Superuser) error
-	FindSuperuserByUsername(ctx context.Context, username string) (*types.Superuser, error)
-	FindSuperuserByResetToken(ctx context.Context, token string) (*types.Superuser, error)
-	GetRoles(ctx context.Context) ([]string, error)
-	FindActivityLogsByUserID(ctx context.Context, userID uuid.UUID) ([]types.UserActivityLog, error)
+	CreateSuperuser(ctx context.Context, superuser *types.SuperUserType) error
+	FindSuperuserByEmail(ctx context.Context, email string) (*types.SuperUserType, error)
+	FindSuperuserByID(ctx context.Context, id uuid.UUID) (*types.SuperUserType, error)
+	UpdateSuperuser(ctx context.Context, superuser *types.SuperUserType) error
+	FindSuperuserByUsername(ctx context.Context, username string) (*types.SuperUserType, error)
+	FindSuperuserByResetToken(ctx context.Context, token string) (*types.SuperUserType, error)
+	DeleteSuperuserByID(ctx context.Context, id uuid.UUID) error
+	ListSuperusers(ctx context.Context, limit, skip int64) ([]*types.SuperUserType, error)
+	UpdateResetToken(ctx context.Context, id uuid.UUID, token string) error
+	GetRoleByID(ctx context.Context, id uuid.UUID) (string, error)
+	Enable2FA(ctx context.Context, id uuid.UUID, isEnabled bool) error
+	SearchSuperusers(ctx context.Context, searchQuery string) ([]*types.SuperUserType, error)
+	SoftDeleteSuperuser(ctx context.Context, id uuid.UUID) error
+	FindAll2FAEnabledSuperusers(ctx context.Context) ([]*types.SuperUserType, error)
+	UpdateSuperuserRole(ctx context.Context, id uuid.UUID, role string) error
+	BulkUpdateSuperusers(ctx context.Context, ids []uuid.UUID, updates map[string]interface{}) error
 }
 
 type superuserRepo struct {
@@ -32,18 +41,20 @@ func NewSuperuserRepository(db *mongo.Database) SuperuserRepository {
 	}
 }
 
-func (r *superuserRepo) CreateSuperuser(ctx context.Context, superuser *types.Superuser) error {
+// CreateSuperuser creates a new superuser.
+func (r *superuserRepo) CreateSuperuser(ctx context.Context, superuser *types.SuperUserType) error {
 	superuser.CreatedAt = time.Now().Unix()
 	superuser.UpdatedAt = time.Now().Unix()
 	if superuser.ID == uuid.Nil {
-		superuser.ID = uuid.New() // Generate a new UUID if not provided
+		superuser.ID = uuid.New()
 	}
 	_, err := r.db.InsertOne(ctx, superuser)
 	return err
 }
 
-func (r *superuserRepo) FindSuperuserByEmail(ctx context.Context, email string) (*types.Superuser, error) {
-	var superuser types.Superuser
+// FindSuperuserByEmail finds a superuser by email.
+func (r *superuserRepo) FindSuperuserByEmail(ctx context.Context, email string) (*types.SuperUserType, error) {
+	var superuser types.SuperUserType
 	err := r.db.FindOne(ctx, bson.M{"email": email}).Decode(&superuser)
 	if err == mongo.ErrNoDocuments {
 		return nil, errors.New("superuser not found")
@@ -51,8 +62,9 @@ func (r *superuserRepo) FindSuperuserByEmail(ctx context.Context, email string) 
 	return &superuser, err
 }
 
-func (r *superuserRepo) FindSuperuserByID(ctx context.Context, id uuid.UUID) (*types.Superuser, error) {
-	var superuser types.Superuser
+// FindSuperuserByID finds a superuser by ID.
+func (r *superuserRepo) FindSuperuserByID(ctx context.Context, id uuid.UUID) (*types.SuperUserType, error) {
+	var superuser types.SuperUserType
 	err := r.db.FindOne(ctx, bson.M{"_id": id}).Decode(&superuser)
 	if err == mongo.ErrNoDocuments {
 		return nil, errors.New("superuser not found")
@@ -60,13 +72,14 @@ func (r *superuserRepo) FindSuperuserByID(ctx context.Context, id uuid.UUID) (*t
 	return &superuser, err
 }
 
-func (r *superuserRepo) UpdateSuperuser(ctx context.Context, superuser *types.Superuser) error {
+// UpdateSuperuser updates a superuser's details.
+func (r *superuserRepo) UpdateSuperuser(ctx context.Context, superuser *types.SuperUserType) error {
 	filter := bson.M{"_id": superuser.ID}
 	update := bson.M{
 		"$set": bson.M{
 			"username":       superuser.Username,
 			"password":       superuser.Password,
-			"updated_at":     superuser.UpdatedAt,
+			"updated_at":     time.Now().Unix(),
 			"is_2fa_enabled": superuser.Is2FAEnabled,
 		},
 	}
@@ -74,8 +87,9 @@ func (r *superuserRepo) UpdateSuperuser(ctx context.Context, superuser *types.Su
 	return err
 }
 
-func (r *superuserRepo) FindSuperuserByUsername(ctx context.Context, username string) (*types.Superuser, error) {
-	var superuser types.Superuser
+// FindSuperuserByUsername finds a superuser by username.
+func (r *superuserRepo) FindSuperuserByUsername(ctx context.Context, username string) (*types.SuperUserType, error) {
+	var superuser types.SuperUserType
 	err := r.db.FindOne(ctx, bson.M{"username": username}).Decode(&superuser)
 	if err == mongo.ErrNoDocuments {
 		return nil, errors.New("superuser not found")
@@ -83,51 +97,123 @@ func (r *superuserRepo) FindSuperuserByUsername(ctx context.Context, username st
 	return &superuser, err
 }
 
-func (r *superuserRepo) FindSuperuserByResetToken(ctx context.Context, token string) (*types.Superuser, error) {
-	var superuser types.Superuser
+// FindSuperuserByResetToken finds a superuser by reset token.
+func (r *superuserRepo) FindSuperuserByResetToken(ctx context.Context, token string) (*types.SuperUserType, error) {
+	var superuser types.SuperUserType
 	err := r.db.FindOne(ctx, bson.M{"reset_token": token}).Decode(&superuser)
 	if err == mongo.ErrNoDocuments {
 		return nil, errors.New("superuser not found")
 	}
 	return &superuser, err
 }
+func (r *superuserRepo) GetRoleByID(ctx context.Context, id uuid.UUID) (string, error) {
+	var superuser types.SuperUserType
+	filter := bson.M{"_id": id}
 
-func (r *superuserRepo) GetRoles(ctx context.Context) ([]string, error) {
-	var roles []string
-	cursor, err := r.db.Database().Collection("roles").Find(ctx, bson.M{})
-	if err != nil {
-		return nil, err
+	// Only fetching the role field, for performance optimization
+	projection := bson.M{"role": 1}
+
+	err := r.db.FindOne(ctx, filter, options.FindOne().SetProjection(projection)).Decode(&superuser)
+	if err == mongo.ErrNoDocuments {
+		return "", errors.New("superuser not found")
 	}
-	defer cursor.Close(ctx)
-	for cursor.Next(ctx) {
-		var role string
-		if err := cursor.Decode(&role); err != nil {
-			return nil, err
-		}
-		roles = append(roles, role)
-	}
-	if err := cursor.Err(); err != nil {
-		return nil, err
-	}
-	return roles, nil
+
+	return superuser.Role, err
 }
 
-func (r *superuserRepo) FindActivityLogsByUserID(ctx context.Context, userID uuid.UUID) ([]types.UserActivityLog, error) {
-	var logs []types.UserActivityLog
-	cursor, err := r.db.Database().Collection("activity_logs").Find(ctx, bson.M{"user_id": userID})
+// DeleteSuperuserByID deletes a superuser by their ID.
+func (r *superuserRepo) DeleteSuperuserByID(ctx context.Context, id uuid.UUID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": id})
+	return err
+}
+
+// ListSuperusers lists superusers with pagination.
+func (r *superuserRepo) ListSuperusers(ctx context.Context, limit, skip int64) ([]*types.SuperUserType, error) {
+	var superusers []*types.SuperUserType
+	findOptions := options.Find()
+	findOptions.SetLimit(limit)
+	findOptions.SetSkip(skip)
+
+	cursor, err := r.db.Find(ctx, bson.M{}, findOptions)
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
-	for cursor.Next(ctx) {
-		var log types.UserActivityLog
-		if err := cursor.Decode(&log); err != nil {
-			return nil, err
-		}
-		logs = append(logs, log)
-	}
-	if err := cursor.Err(); err != nil {
+	if err = cursor.All(ctx, &superusers); err != nil {
 		return nil, err
 	}
-	return logs, nil
+	return superusers, nil
+}
+
+// UpdateResetToken updates the reset token for a superuser.
+func (r *superuserRepo) UpdateResetToken(ctx context.Context, id uuid.UUID, token string) error {
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"reset_token": token, "updated_at": time.Now().Unix()}}
+	_, err := r.db.UpdateOne(ctx, filter, update)
+	return err
+}
+
+// Enable2FA enables or disables 2FA for a superuser.
+func (r *superuserRepo) Enable2FA(ctx context.Context, id uuid.UUID, isEnabled bool) error {
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"is_2fa_enabled": isEnabled, "updated_at": time.Now().Unix()}}
+	_, err := r.db.UpdateOne(ctx, filter, update)
+	return err
+}
+
+// SoftDeleteSuperuser marks a superuser as archived instead of permanently deleting.
+func (r *superuserRepo) SoftDeleteSuperuser(ctx context.Context, id uuid.UUID) error {
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"archived": true, "updated_at": time.Now().Unix()}}
+	_, err := r.db.UpdateOne(ctx, filter, update)
+	return err
+}
+
+// SearchSuperusers allows partial search by full_name, username, or email.
+func (r *superuserRepo) SearchSuperusers(ctx context.Context, searchQuery string) ([]*types.SuperUserType, error) {
+	var superusers []*types.SuperUserType
+	filter := bson.M{
+		"$or": []bson.M{
+			{"full_name": bson.M{"$regex": searchQuery, "$options": "i"}},
+			{"username": bson.M{"$regex": searchQuery, "$options": "i"}},
+			{"email": bson.M{"$regex": searchQuery, "$options": "i"}},
+		},
+	}
+	cursor, err := r.db.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	if err = cursor.All(ctx, &superusers); err != nil {
+		return nil, err
+	}
+	return superusers, nil
+}
+
+// FindAll2FAEnabledSuperusers finds all superusers with 2FA enabled.
+func (r *superuserRepo) FindAll2FAEnabledSuperusers(ctx context.Context) ([]*types.SuperUserType, error) {
+	var superusers []*types.SuperUserType
+	filter := bson.M{"is_2fa_enabled": true}
+	cursor, err := r.db.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	if err = cursor.All(ctx, &superusers); err != nil {
+		return nil, err
+	}
+	return superusers, nil
+}
+
+// UpdateSuperuserRole updates the role of a superuser.
+func (r *superuserRepo) UpdateSuperuserRole(ctx context.Context, id uuid.UUID, role string) error {
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"role": role, "updated_at": time.Now().Unix()}}
+	_, err := r.db.UpdateOne(ctx, filter, update)
+	return err
+}
+
+// BulkUpdateSuperusers updates multiple superusers at once.
+func (r *superuserRepo) BulkUpdateSuperusers(ctx context.Context, ids []uuid.UUID, updates map[string]interface{}) error {
+	filter := bson.M{"_id": bson.M{"$in": ids}}
+	update := bson.M{"$set": updates}
+	_, err := r.db.UpdateMany(ctx, filter, update)
+	return err
 }

@@ -12,17 +12,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// SuperuserService defines the methods for the superuser-related functionalities.
 type SuperuserService interface {
 	RegisterSuperuser(ctx context.Context, username, email, password string) error
-	AuthenticateSuperuser(ctx context.Context, email, password string) (*types.Superuser, error)
+	AuthenticateSuperuser(ctx context.Context, email, password string) (*types.SuperUserType, error)
 	UpdateProfile(ctx context.Context, userID uuid.UUID, username, password string) error
 	SendPasswordResetEmail(ctx context.Context, email string) error
 	ResetPassword(ctx context.Context, token, password string) error
 	Verify2FA(ctx context.Context, userID uuid.UUID, code string) error
-	ListRoles(ctx context.Context) ([]string, error)
-	GetUserActivityLogs(ctx context.Context, userID uuid.UUID) ([]types.UserActivityLog, error)
 	GetFilePath(fileID string) (string, error)
+	GetRole(ctx context.Context, userID uuid.UUID) (string, error)
+	UpdateRole(ctx context.Context, userID uuid.UUID, role string) error
+	Enable2FA(ctx context.Context, userID uuid.UUID, isEnabled bool) error
+	BulkUpdateSuperusers(ctx context.Context, ids []uuid.UUID, updates map[string]interface{}) error
+	SearchSuperusers(ctx context.Context, searchQuery string) ([]*types.SuperUserType, error)
 }
 
 type superuserService struct {
@@ -33,6 +35,7 @@ func NewSuperuserService(repo repositories.SuperuserRepository) SuperuserService
 	return &superuserService{repo: repo}
 }
 
+// RegisterSuperuser creates a new superuser with hashed password.
 func (s *superuserService) RegisterSuperuser(ctx context.Context, username, email, password string) error {
 	// Check if the email already exists
 	_, err := s.repo.FindSuperuserByEmail(ctx, email)
@@ -47,8 +50,8 @@ func (s *superuserService) RegisterSuperuser(ctx context.Context, username, emai
 	}
 
 	// Create superuser
-	superuser := &types.Superuser{
-		ID:        uuid.New(), // Generate a new UUID
+	superuser := &types.SuperUserType{
+		ID:        uuid.New(),
 		Username:  username,
 		Email:     email,
 		Password:  string(hashedPassword),
@@ -59,14 +62,13 @@ func (s *superuserService) RegisterSuperuser(ctx context.Context, username, emai
 	return s.repo.CreateSuperuser(ctx, superuser)
 }
 
-func (s *superuserService) AuthenticateSuperuser(ctx context.Context, email, password string) (*types.Superuser, error) {
-	// Find superuser by email
+// AuthenticateSuperuser verifies a superuser's credentials.
+func (s *superuserService) AuthenticateSuperuser(ctx context.Context, email, password string) (*types.SuperUserType, error) {
 	superuser, err := s.repo.FindSuperuserByEmail(ctx, email)
 	if err != nil {
 		return nil, errors.New("superuser not found")
 	}
 
-	// Check the password
 	err = bcrypt.CompareHashAndPassword([]byte(superuser.Password), []byte(password))
 	if err != nil {
 		return nil, errors.New("invalid credentials")
@@ -75,7 +77,7 @@ func (s *superuserService) AuthenticateSuperuser(ctx context.Context, email, pas
 	return superuser, nil
 }
 
-// Update user profile.
+// UpdateProfile updates the username and password of a superuser.
 func (s *superuserService) UpdateProfile(ctx context.Context, userID uuid.UUID, username, password string) error {
 	superuser, err := s.repo.FindSuperuserByID(ctx, userID)
 	if err != nil {
@@ -98,23 +100,24 @@ func (s *superuserService) UpdateProfile(ctx context.Context, userID uuid.UUID, 
 	return s.repo.UpdateSuperuser(ctx, superuser)
 }
 
-// Send password reset email (just a placeholder for now).
+// SendPasswordResetEmail sends a reset token (placeholder functionality).
 func (s *superuserService) SendPasswordResetEmail(ctx context.Context, email string) error {
 	superuser, err := s.repo.FindSuperuserByEmail(ctx, email)
 	if err != nil {
 		return err
 	}
 
-	// Here you would typically generate a reset token and send an email
-	resetToken := "reset-token-placeholder"
+	// Generate and send a reset token (placeholder logic)
+	resetToken := "generated-reset-token"
 	fmt.Printf("Sending password reset token to %s: %s\n", superuser.Email, resetToken)
-	return nil
+
+	return s.repo.UpdateResetToken(ctx, superuser.ID, resetToken)
 }
 
-// Reset user password.
+// ResetPassword resets the password of a superuser using a token.
 func (s *superuserService) ResetPassword(ctx context.Context, token, password string) error {
-	// Token validation logic should go here (this is a placeholder)
-	if token != "valid-token" {
+	superuser, err := s.repo.FindSuperuserByResetToken(ctx, token)
+	if err != nil {
 		return errors.New("invalid reset token")
 	}
 
@@ -123,55 +126,55 @@ func (s *superuserService) ResetPassword(ctx context.Context, token, password st
 		return errors.New("failed to hash password")
 	}
 
-	superuser, err := s.repo.FindSuperuserByResetToken(ctx, token)
-	if err != nil {
-		return err
-	}
-
 	superuser.Password = string(hashedPassword)
 	superuser.UpdatedAt = time.Now().Unix()
 
 	return s.repo.UpdateSuperuser(ctx, superuser)
 }
 
-// Verify 2FA code.
+// Verify2FA verifies the 2FA code (placeholder logic).
 func (s *superuserService) Verify2FA(ctx context.Context, userID uuid.UUID, code string) error {
 	superuser, err := s.repo.FindSuperuserByID(ctx, userID)
 	if err != nil {
 		return err
 	}
 
-	// 2FA verification logic (placeholder)
+	// Verify 2FA code (placeholder)
 	if code != "expected-2fa-code" {
 		return errors.New("invalid 2FA code")
 	}
 
-	// Mark the 2FA as verified
 	superuser.Is2FAEnabled = true
 	return s.repo.UpdateSuperuser(ctx, superuser)
 }
 
-// List user roles (for role-based access control).
-func (s *superuserService) ListRoles(ctx context.Context) ([]string, error) {
-	roles, err := s.repo.GetRoles(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return roles, nil
+// Enable2FA enables or disables 2FA for a superuser.
+func (s *superuserService) Enable2FA(ctx context.Context, userID uuid.UUID, isEnabled bool) error {
+	return s.repo.Enable2FA(ctx, userID, isEnabled)
 }
 
-// Get user activity logs.
-func (s *superuserService) GetUserActivityLogs(ctx context.Context, userID uuid.UUID) ([]types.UserActivityLog, error) {
-	logs, err := s.repo.FindActivityLogsByUserID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-	return logs, nil
-}
-
-// Get file path by file ID.
+// GetFilePath returns the file path for a given file ID (placeholder functionality).
 func (s *superuserService) GetFilePath(fileID string) (string, error) {
-	// This is a placeholder. Normally, you'd look up the file in the database.
-	filePath := fmt.Sprintf("./uploads/%s", fileID)
-	return filePath, nil
+	// Placeholder logic for file path
+	return fmt.Sprintf("./uploads/%s", fileID), nil
+}
+
+// GetRole retrieves the role of a superuser by their ID.
+func (s *superuserService) GetRole(ctx context.Context, userID uuid.UUID) (string, error) {
+	return s.repo.GetRoleByID(ctx, userID)
+}
+
+// UpdateRole updates the role of a superuser by their ID.
+func (s *superuserService) UpdateRole(ctx context.Context, userID uuid.UUID, role string) error {
+	return s.repo.UpdateSuperuserRole(ctx, userID, role)
+}
+
+// BulkUpdateSuperusers updates multiple superusers at once.
+func (s *superuserService) BulkUpdateSuperusers(ctx context.Context, ids []uuid.UUID, updates map[string]interface{}) error {
+	return s.repo.BulkUpdateSuperusers(ctx, ids, updates)
+}
+
+// SearchSuperusers allows searching for superusers based on partial matches of full name, username, or email.
+func (s *superuserService) SearchSuperusers(ctx context.Context, searchQuery string) ([]*types.SuperUserType, error) {
+	return s.repo.SearchSuperusers(ctx, searchQuery)
 }

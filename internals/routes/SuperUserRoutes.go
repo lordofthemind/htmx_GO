@@ -39,9 +39,6 @@ func RegisterSuperuserRoutes(router *gin.Engine, superuserHandler *handlers.Supe
 			protectedRoutes.GET("/enable-2fa", superuserHandler.Enable2FAHandler)
 			protectedRoutes.POST("/verify-2fa", superuserHandler.Verify2FAHandler)
 
-			// Role management
-			protectedRoutes.GET("/roles", superuserHandler.RoleManagementHandler)
-
 			// File upload and download
 			protectedRoutes.POST("/upload", superuserHandler.FileUploadHandler)
 			protectedRoutes.GET("/download/:filename", superuserHandler.FileDownloadHandler)

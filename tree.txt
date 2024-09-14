@@ -46,7 +46,9 @@
 │   │   ├── RequestIDMiddlware.go
 │   │   └── ResponseStrategyMiddleware.go
 │   └── tokens
-│       └── JwtToken.go
+│       ├── JwtToken.go
+│       ├── PasetoManager.go
+│       └── TokenManager.go
 ├── scripts
 │   ├── loginHtml.sh
 │   ├── loginJson.sh
@@ -75,4 +77,4 @@
 │   └── main
 └── tree.txt
 
-24 directories, 52 files
+24 directories, 54 files

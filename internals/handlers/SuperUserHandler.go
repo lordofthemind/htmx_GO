@@ -267,51 +267,6 @@ func (h *SuperuserHandler) Verify2FAHandler(c *gin.Context) {
 	h.handleSuccess(c, "2fa_success.html", "2FA verified successfully", http.StatusOK)
 }
 
-func (h *SuperuserHandler) RoleManagementHandler(c *gin.Context) {
-	roles, err := h.service.ListRoles(c.Request.Context())
-	if err != nil {
-		h.handleError(c, "role_management.html", "Failed to retrieve roles", http.StatusInternalServerError)
-		return
-	}
-
-	strategy := responses.GetResponseStrategy(c)
-	strategy.Respond(c, map[string]interface{}{
-		"template": "role_management.html",
-		"title":    "Role Management",
-		"roles":    roles,
-	}, http.StatusOK)
-}
-
-func (h *SuperuserHandler) UserActivityLogHandler(c *gin.Context) {
-	strategy := responses.GetResponseStrategy(c)
-
-	// Retrieve the user ID from the context and convert it to uuid.UUID
-	userIDStr := c.GetString("userID")
-	userID, err := uuid.Parse(userIDStr)
-	if err != nil {
-		strategy.Respond(c, map[string]interface{}{
-			"template": "activity_log.html",
-			"error":    "Invalid user ID format",
-		}, http.StatusBadRequest)
-		return
-	}
-
-	// Fetch the user activity logs using the UUID
-	logs, err := h.service.GetUserActivityLogs(c.Request.Context(), userID)
-	if err != nil {
-		strategy.Respond(c, map[string]interface{}{
-			"template": "activity_log.html",
-			"error":    "Failed to retrieve activity logs",
-		}, http.StatusInternalServerError)
-		return
-	}
-
-	strategy.Respond(c, map[string]interface{}{
-		"template": "activity_log.html",
-		"logs":     logs,
-	}, http.StatusOK)
-}
-
 func (h *SuperuserHandler) FileUploadHandler(c *gin.Context) {
 	strategy := responses.GetResponseStrategy(c)
 
