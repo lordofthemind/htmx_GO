@@ -67,7 +67,10 @@ func RunServer() {
 	service := services.NewSuperuserService(repo)
 
 	// Use the new NewTokenManager function
-	tokenManager := tokens.NewTokenManager()
+	tokenManager, err := tokens.NewTokenManager()
+	if err != nil {
+		log.Fatalf("Failed to initiate token: %v", err)
+	}
 	handler := handlers.NewSuperuserHandler(service, tokenManager)
 
 	// Middleware and route registration

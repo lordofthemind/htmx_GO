@@ -65,4 +65,4 @@ staging:
 token:
   symmetric_key: qwertyuiopasdfghjklzxcvbnmqwerty
   access_duration: 15m
-  use_jwt: false
+  use_jwt: true

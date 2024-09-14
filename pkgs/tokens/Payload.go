@@ -1,30 +1,44 @@
 package tokens
 
 import (
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
 )
 
+var (
+	ErrInvalidToken = errors.New("token is invalid")
+	ErrExpiredToken = errors.New("token has expired")
+)
+
 type Payload struct {
 	ID        uuid.UUID `json:"id"`
 	Username  string    `json:"username"`
-	CreatedAt time.Time `json:"created_at"`
-	ExpiryAt  time.Time `json:"expiry_at"`
+	IssuedAt  time.Time `json:"issued_at"`
+	ExpiredAt time.Time `json:"expired_at"`
 }
 
+// NewPayload creates a new token payload with the username and duration
 func NewPayload(username string, duration time.Duration) (*Payload, error) {
-	tokenId, err := uuid.NewRandom()
+	tokenID, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
 	}
 
 	payload := &Payload{
-		ID:        tokenId,
+		ID:        tokenID,
 		Username:  username,
-		CreatedAt: time.Now(),
-		ExpiryAt:  time.Now().Add(duration),
+		IssuedAt:  time.Now(),
+		ExpiredAt: time.Now().Add(duration),
 	}
 
 	return payload, nil
+}
+
+func (payload *Payload) Valid() error {
+	if time.Now().After(payload.ExpiredAt) {
+		return ErrExpiredToken
+	}
+	return nil
 }

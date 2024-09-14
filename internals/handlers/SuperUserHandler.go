@@ -112,7 +112,7 @@ func (h *SuperuserHandler) LoginSuperuserHandler(c *gin.Context) {
 		return
 	}
 
-	token, err := h.tokenManager.GenerateToken(user.ID.String())
+	token, err := h.tokenManager.GenerateToken(user.Email, configs.TokenAccessDuration) // Use username/email
 	if err != nil {
 		h.handleError(c, "login_error.html", "Failed to generate token", http.StatusInternalServerError)
 		return
