@@ -13,6 +13,13 @@ server:
   port: 9090
   use_cors: false  # Set this to `true` to enable CORS, `false` to disable
 
+smtp:
+  server: smtp.example.com
+  port: 587
+  username: your-email@example.com
+  password: your-email-password
+  
+
 # Development Environment Variables
 development:
   mongoDB_url: mongodb://localhost:27017/

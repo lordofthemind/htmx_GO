@@ -36,8 +36,14 @@
 │   │   ├── SuperUserType.go
 │   │   └── UserActivityLogType.go
 │   └── utils
+├── logs
+│   ├── 20240914_185647_Server.log
+│   ├── 20240914_185648_Server.log
+│   └── 20240914_185721_Server.log
 ├── main.go
 ├── pkgs
+│   ├── email
+│   │   └── EmailSMTP.go
 │   ├── helpers
 │   │   └── LoadTLSCertificates.go
 │   ├── middlewares
@@ -46,8 +52,9 @@
 │   │   ├── RequestIDMiddlware.go
 │   │   └── ResponseStrategyMiddleware.go
 │   └── tokens
-│       ├── JwtToken.go
-│       ├── PasetoManager.go
+│       ├── JwtMaker.go
+│       ├── PasetoMaker.go
+│       ├── Payload.go
 │       └── TokenManager.go
 ├── scripts
 │   ├── loginHtml.sh
@@ -77,4 +84,4 @@
 │   └── main
 └── tree.txt
 
-24 directories, 54 files
+26 directories, 59 files
