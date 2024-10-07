@@ -139,56 +139,6 @@ func (h *SuperuserHandler) DashboardSuperuserHandler(c *gin.Context) {
 	}, http.StatusOK)
 }
 
-func (h *SuperuserHandler) TestTemplate(c *gin.Context) {
-	strategy := responses.GetResponseStrategy(c)
-	strategy.Respond(c, map[string]interface{}{"template": "test.html"}, http.StatusOK)
-}
-
-func (h *SuperuserHandler) ProfileViewHandler(c *gin.Context) {
-	strategy := responses.GetResponseStrategy(c)
-	strategy.Respond(c, map[string]interface{}{
-		"template": "profile.html",
-		"title":    "Profile",
-		"user_id":  c.GetString("userID"),
-	}, http.StatusOK)
-}
-
-func (h *SuperuserHandler) ProfileUpdateHandler(c *gin.Context) {
-	var request struct {
-		Username string `form:"username" binding:"required"`
-		Password string `form:"password"`
-	}
-
-	// Bind the form data
-	if err := c.ShouldBind(&request); err != nil {
-		h.handleError(c, "profile_edit.html", "Invalid input data", http.StatusBadRequest)
-		return
-	}
-
-	// Retrieve the user ID from the context
-	userIDStr, exists := c.Get("userID")
-	if !exists {
-		h.handleError(c, "profile_edit.html", "User not authenticated", http.StatusUnauthorized)
-		return
-	}
-
-	// Convert user ID from string to uuid.UUID
-	userID, err := uuid.Parse(userIDStr.(string))
-	if err != nil {
-		h.handleError(c, "profile_edit.html", "Invalid user ID", http.StatusBadRequest)
-		return
-	}
-
-	// Call UpdateProfile with the correct arguments
-	err = h.service.UpdateProfile(c.Request.Context(), userID, request.Username, request.Password)
-	if err != nil {
-		h.handleError(c, "profile_edit.html", "Failed to update profile", http.StatusInternalServerError)
-		return
-	}
-
-	h.handleSuccess(c, "profile_success.html", "Profile updated successfully", http.StatusOK)
-}
-
 func (h *SuperuserHandler) PasswordResetRequestHandler(c *gin.Context) {
 	var request struct {
 		Email string `form:"email" binding:"required,email"`
@@ -265,6 +215,56 @@ func (h *SuperuserHandler) Verify2FAHandler(c *gin.Context) {
 	}
 
 	h.handleSuccess(c, "2fa_success.html", "2FA verified successfully", http.StatusOK)
+}
+
+func (h *SuperuserHandler) TestTemplate(c *gin.Context) {
+	strategy := responses.GetResponseStrategy(c)
+	strategy.Respond(c, map[string]interface{}{"template": "test.html"}, http.StatusOK)
+}
+
+func (h *SuperuserHandler) ProfileViewHandler(c *gin.Context) {
+	strategy := responses.GetResponseStrategy(c)
+	strategy.Respond(c, map[string]interface{}{
+		"template": "profile.html",
+		"title":    "Profile",
+		"user_id":  c.GetString("userID"),
+	}, http.StatusOK)
+}
+
+func (h *SuperuserHandler) ProfileUpdateHandler(c *gin.Context) {
+	var request struct {
+		Username string `form:"username" binding:"required"`
+		Password string `form:"password"`
+	}
+
+	// Bind the form data
+	if err := c.ShouldBind(&request); err != nil {
+		h.handleError(c, "profile_edit.html", "Invalid input data", http.StatusBadRequest)
+		return
+	}
+
+	// Retrieve the user ID from the context
+	userIDStr, exists := c.Get("userID")
+	if !exists {
+		h.handleError(c, "profile_edit.html", "User not authenticated", http.StatusUnauthorized)
+		return
+	}
+
+	// Convert user ID from string to uuid.UUID
+	userID, err := uuid.Parse(userIDStr.(string))
+	if err != nil {
+		h.handleError(c, "profile_edit.html", "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
+	// Call UpdateProfile with the correct arguments
+	err = h.service.UpdateProfile(c.Request.Context(), userID, request.Username, request.Password)
+	if err != nil {
+		h.handleError(c, "profile_edit.html", "Failed to update profile", http.StatusInternalServerError)
+		return
+	}
+
+	h.handleSuccess(c, "profile_success.html", "Profile updated successfully", http.StatusOK)
 }
 
 func (h *SuperuserHandler) FileUploadHandler(c *gin.Context) {

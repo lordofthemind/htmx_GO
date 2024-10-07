@@ -63,7 +63,8 @@ func RunServer() {
 	}
 
 	// Set up service, handler, and middleware
-	repo := repositories.NewSuperuserRepository(mongoDB)
+	repo := repositories.NewMongoSuperuserRepository(mongoDB)
+	// repo := repositories.NewInMemorySuperuserRepository()
 	service := services.NewSuperuserService(repo)
 
 	// Use the new NewTokenManager function
