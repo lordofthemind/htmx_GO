@@ -23,6 +23,7 @@
 │   │   ├── LoggerFile.go
 │   │   └── MongoDB.go
 │   ├── repositories
+│   │   ├── InMemorySuperUserRepository.go
 │   │   └── SuperUserRepository.go
 │   ├── responses
 │   │   ├── ResponseStrategy.go
@@ -84,4 +85,4 @@
 │   └── main
 └── tree.txt
 
-26 directories, 59 files
+26 directories, 60 files
